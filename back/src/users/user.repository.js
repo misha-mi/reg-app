@@ -15,4 +15,11 @@ export class UserRepository {
             where: { login }
         });
     }
+
+    async setToken(login, token) {
+        return this.prismaClient.user.update({
+            where: { login },
+            data: { token }
+        })
+    }
 }
