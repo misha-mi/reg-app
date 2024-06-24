@@ -1,0 +1,25 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon",
+    "dev:inspect": "nodemon -e js,json --exec node --inspect=localhost:9222 ./src/main.js",
+    "start": "node ./src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.15.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "chalk": "^5.3.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "prisma": "^5.15.1"
+  }
+}

@@ -1,0 +1,6 @@
+**/node_modules
+**/dist
+**/.env
+/back/src/prisma/dev.db
+/back/prisma/dev.db-journal
+/back/src/.clinic

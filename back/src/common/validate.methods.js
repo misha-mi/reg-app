@@ -1,0 +1,32 @@
+const LOGIN_REGEXP = /^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u;
+const PASSWORD_REGEXP = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+
+export class ValidateMethods {
+    validateLogin(login) {
+        if(!login) {
+            return "Please provide your login";
+        } else if(!LOGIN_REGEXP.test(login)) {
+            return "Please enter the correct login";
+        } else {
+            return null;
+        }
+    }
+    
+    validatePassword(password) {
+        if(!password) {
+            return "Please provide your password";
+        } else if(!PASSWORD_REGEXP.test(password)) {
+            return "Please enter the correct password";
+        } else {
+            return null;
+        }
+    }
+
+    validateName(name) {
+        if(!name) {
+            return "Please provide your name";
+        } else {
+            return null;
+        }
+    }
+}
