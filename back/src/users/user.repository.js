@@ -23,6 +23,12 @@ export class UserRepository {
         })
     }
 
+    async getUser(login) {
+        return this.prismaClient.user.findFirst({
+            where: {login}
+        })
+    }
+
     async getAll() {
         return this.prismaClient.user.findMany({
             where: {role: "user"}

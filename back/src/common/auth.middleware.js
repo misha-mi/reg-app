@@ -16,7 +16,7 @@ export class AuthMiddleware {
 
         try {
             const {role} = jsonwebtoken.verify(token, "secret");
-            if(role != this.role) {
+            if(!this.role.includes(role)) {
                 next(new HTTPError(403, "Forbidden", this.context))
             }
             next();

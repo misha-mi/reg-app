@@ -58,4 +58,15 @@ export class UserService {
             return {id, login, name, password};
         });
     }
+
+    async getConfig(login) {
+        const user = await this.userRepository.getUser(login);
+        const [usersLogin, domain] = user.login.split("@");
+        return {
+            login: usersLogin,
+            domain,
+            pass: user.password,
+            ip: "something"
+        }
+    }
 }

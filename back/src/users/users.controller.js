@@ -15,7 +15,7 @@ export class UserController extends BaseContoller {
                 path: "/register",
                 func: this.register,
                 middlewares: [
-                    new AuthMiddleware({context:"register", role:"admin"}), 
+                    new AuthMiddleware({context:"register", role:["admin"]}), 
                     new ValidateMiddleware(UserRegisterDto)
                 ]
             },
@@ -29,7 +29,13 @@ export class UserController extends BaseContoller {
                 method: "get", 
                 path: "/getUsers",
                 func: this.getUsers,
-                middlewares: [new AuthMiddleware({context:"register", role:"admin"})]
+                middlewares: [new AuthMiddleware({context:"register", role:["admin"]})]
+            },
+            {
+                method: "get",
+                path: "/getConfig",
+                func: this.getConfig,
+                middlewares: [new AuthMiddleware({context:"register", role:["admin", "user"]})]
             }
         ])
     }
@@ -60,7 +66,11 @@ export class UserController extends BaseContoller {
     }
 
     async getConfig(req , res, next) {
-
+        const config = await this.userService.getConfig();
+        if(!config) {
+            next(new HTTPError(500, "Could not get the configuration file", "getConfig"));
+        }
+        this.ok(res, config);
     }
 
     async removeUser(req, res, next) {
