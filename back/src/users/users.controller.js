@@ -1,3 +1,4 @@
+import { AuthMiddleware } from "../common/auth.middleware.js";
 import { BaseContoller } from "../common/base.controller.js";
 import { ValidateMiddleware } from "../common/validate.middleware.js";
 import { HTTPError } from "../errors/http-error.class.js";
@@ -13,7 +14,10 @@ export class UserController extends BaseContoller {
                 method: "post",
                 path: "/register",
                 func: this.register,
-                middlewares: [new ValidateMiddleware(UserRegisterDto)]
+                middlewares: [
+                    new AuthMiddleware({context:"register", role:"admin"}), 
+                    new ValidateMiddleware(UserRegisterDto)
+                ]
             },
             {
                 method: "post",

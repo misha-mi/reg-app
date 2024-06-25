@@ -1,12 +1,11 @@
 import bcryptjs from "bcryptjs";
 
 export class User {
-    _password;
-    constructor(login, name, passwordHash) {
+    constructor({login, name, password, role = "user"}) {
         this._login = login;
         this._name = name;
-        this._role = "user";
-        this._password = passwordHash;
+        this._role = role;
+        this._password = password;
     }
 
     get login() {

@@ -11,7 +11,7 @@ export class UserService {
         if(isExistUser) {
             return null;
         }
-        const newUser = new User(login, name);
+        const newUser = new User({login, name});
         await newUser.setPassword(password);
         return this.userRepository.create(newUser);
     }
@@ -21,7 +21,7 @@ export class UserService {
         if(!data) {
             return null;
         }
-        const user = new User(data.login, data.name, data.password);
+        const user = new User(data);
         const isValid = await user.comparePassword(password);
         if(isValid) {
             return user;

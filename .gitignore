@@ -2,5 +2,6 @@
 **/dist
 **/.env
 /back/src/prisma/dev.db
+**/dev.db
 /back/prisma/dev.db-journal
 /back/src/.clinic
