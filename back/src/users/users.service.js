@@ -51,4 +51,11 @@ export class UserService {
             } );
         })
     }
+
+    async getUsers() {
+        const users = await this.userRepository.getAll();
+        return users.map(({id, login, name, password}) => {
+            return {id, login, name, password};
+        });
+    }
 }

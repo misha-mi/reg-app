@@ -16,10 +16,16 @@ export class UserRepository {
         });
     }
 
-    async setToken(login, token) {
+    async setToken(login, token) { // убрать
         return this.prismaClient.user.update({
             where: { login },
             data: { token }
         })
+    }
+
+    async getAll() {
+        return this.prismaClient.user.findMany({
+            where: {role: "user"}
+        });
     }
 }

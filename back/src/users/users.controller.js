@@ -24,6 +24,12 @@ export class UserController extends BaseContoller {
                 path: "/login",
                 func: this.login,
                 middlewares: [new ValidateMiddleware(UserLoginDto)]
+            },
+            {
+                method: "get", 
+                path: "/getUsers",
+                func: this.getUsers,
+                middlewares: [new AuthMiddleware({context:"register", role:"admin"})]
             }
         ])
     }
@@ -41,6 +47,7 @@ export class UserController extends BaseContoller {
         const result = await this.userService.validateUser(req.body);
         if(result) {
             const jwt = await this.userService.setToken(result.login, result.role);
+            this.logger.log(`[login] The user has logged in (name: ${result.name})`)
             this.ok(res, jwt);
         } else {
             next(new HTTPError(401, "Unauthorized", "login"))
@@ -48,7 +55,8 @@ export class UserController extends BaseContoller {
     }
 
     async getUsers(req, res, next) {
-
+        const users = await this.userService.getUsers();
+        this.ok(res, {users});
     }
 
     async getConfig(req , res, next) {

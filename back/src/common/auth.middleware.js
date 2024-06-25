@@ -14,11 +14,14 @@ export class AuthMiddleware {
             next(new HTTPError(403, "The token is missing", this.context))
         }
 
-        const {role} = jsonwebtoken.verify(token, "secret");
-        if(role != this.role) {
+        try {
+            const {role} = jsonwebtoken.verify(token, "secret");
+            if(role != this.role) {
+                next(new HTTPError(403, "Forbidden", this.context))
+            }
+            next();
+        } catch {
             next(new HTTPError(403, "Forbidden", this.context))
         }
-
-        next();
     }
 }
