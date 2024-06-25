@@ -59,14 +59,26 @@ export class UserService {
         });
     }
 
-    async getConfig(login) {
-        const user = await this.userRepository.getUser(login);
-        const [usersLogin, domain] = user.login.split("@");
+    async getConfig(id) {
+        const user = await this.userRepository.getUser(id);
+        if(!user) {
+            return null;
+        }
+        const [login, domain] = user.login.split("@");
         return {
-            login: usersLogin,
+            login,
             domain,
             pass: user.password,
             ip: "something"
+        }
+    }
+
+    async removeUser(id) {
+        try {
+            const user = await this.userRepository.remove(id);
+            return user;
+        } catch {
+            return null;
         }
     }
 }

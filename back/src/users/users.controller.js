@@ -29,13 +29,19 @@ export class UserController extends BaseContoller {
                 method: "get", 
                 path: "/getUsers",
                 func: this.getUsers,
-                middlewares: [new AuthMiddleware({context:"register", role:["admin"]})]
+                middlewares: [new AuthMiddleware({context:"register", role: ["admin"]})]
             },
             {
                 method: "get",
-                path: "/getConfig",
+                path: "/getConfig/:id",
                 func: this.getConfig,
-                middlewares: [new AuthMiddleware({context:"register", role:["admin", "user"]})]
+                middlewares: [new AuthMiddleware({context:"getConfig", role: ["admin", "user"]})]
+            },
+            {
+                method: "delete",
+                path: "/delete/:id",
+                func: this.removeUser,
+                middlewares: [new AuthMiddleware({context: "delete", role: ["admin"]})]
             }
         ])
     }
@@ -45,7 +51,7 @@ export class UserController extends BaseContoller {
         if(!result) {
             return next(new HTTPError(422, "The user already exists", "register"));
         }
-        this.logger.log(`[register] User has been created (name: ${result.name})`)
+        this.logger.log(`[register] User has been created. (name: ${result.name})`)
         this.ok(res, {login: result.login});
     }
 
@@ -53,7 +59,7 @@ export class UserController extends BaseContoller {
         const result = await this.userService.validateUser(req.body);
         if(result) {
             const jwt = await this.userService.setToken(result.login, result.role);
-            this.logger.log(`[login] The user has logged in (name: ${result.name})`)
+            this.logger.log(`[login] The user has logged in. (name: ${result.name})`)
             this.ok(res, jwt);
         } else {
             next(new HTTPError(401, "Unauthorized", "login"))
@@ -66,14 +72,24 @@ export class UserController extends BaseContoller {
     }
 
     async getConfig(req , res, next) {
-        const config = await this.userService.getConfig();
+        const id = req.params.id;
+        const config = await this.userService.getConfig(id);
         if(!config) {
             next(new HTTPError(500, "Could not get the configuration file", "getConfig"));
+        } else {
+            this.logger.log(`[getConfig] The configuration file has been transferred. (id: ${id})`)
+            this.ok(res, config);
         }
-        this.ok(res, config);
     }
 
     async removeUser(req, res, next) {
-
+        const id = req.params.id;
+        const user = await this.userService.removeUser(id);
+        if(!user) {
+            next(new HTTPError(422, "There is no user with this ID", "removeUser"));
+        } else {
+            this.logger.log(`[removeUser] The user has been deleted (id: ${id})`)
+            this.ok(res, "Deleted successfully");
+        }
     }
 }

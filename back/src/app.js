@@ -4,7 +4,7 @@ import express from "express";
 export class App {
     constructor(logger, userContoller, exeptionFilter) {
         this.app = express();
-        this.port = 8000;
+        this.port = 8001;
         this.server;
         this.logger = logger;
         this.userContoller = userContoller;

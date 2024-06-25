@@ -23,9 +23,9 @@ export class UserRepository {
         })
     }
 
-    async getUser(login) {
+    async getUser(id) {
         return this.prismaClient.user.findFirst({
-            where: {login}
+            where: {id}
         })
     }
 
@@ -33,5 +33,11 @@ export class UserRepository {
         return this.prismaClient.user.findMany({
             where: {role: "user"}
         });
+    }
+
+    async remove(id) {
+        return this.prismaClient.user.delete({
+            where: {id}
+        })
     }
 }
