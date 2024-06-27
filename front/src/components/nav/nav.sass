@@ -1,0 +1,21 @@
+.nav
+  width: 280px
+  background: white
+  display: flex
+  flex-direction: column
+  border-radius: 10px
+  overflow: hidden
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25)
+  &__tab
+    height: 70px
+    font-size: 26px
+    background-color: white
+    border: none
+    cursor: pointer
+    &:nth-child(1)
+      border-radius: 10px 10px 0px 0px
+      border-bottom: 2px solid var(--divider)
+    &:active
+      box-shadow: inset 2px 4px 4px rgba(0, 0, 0, 0.25)
+  &_active
+    background-color: var(--logs)

@@ -1,0 +1,20 @@
+.button
+  padding: 10px
+  font-size: 20px
+  background-color: #E4E4E4
+  border: none
+  border-radius: 5px
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25)
+  cursor: pointer
+  &__img
+    height: 23px
+    width: 23px
+    background: url("../../assets/icons/trash.png") center center/cover no-repeat
+  &_red
+    background-color: var(--error)
+  &_green
+    background-color: var(--success)
+  &_blue
+    background-color: var(--logs)
+  &:active
+    box-shadow: inset 2px 4px 4px rgba(0, 0, 0, 0.25)

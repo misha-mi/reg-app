@@ -1,0 +1,41 @@
+.user
+  display: flex
+  align-items: center
+  gap: 30px
+  padding: 10px 20px
+  border-top: 2px solid var(--divider)
+  &__check input
+    position: absolute
+    opacity: 0
+    cursor: pointer
+    height: 0
+    width: 0
+  &__checkmark
+    display: block
+    width: 22px
+    height: 22px
+    border: 2px solid var(--divider)
+    border-radius: 5px
+    cursor: pointer
+  &__check input:checked ~ &__checkmark
+    background: url("../../assets/icons/check.svg") center center/80% no-repeat
+    border-color: var(--success)
+  &__info
+    display: flex
+    gap: 70px
+  &__text
+    font-size: 20px
+  &__buttons
+    flex-grow: 1
+    display: flex
+    justify-content: flex-end
+    gap: 6px
+  &__column-name
+    border: none
+    padding-left: 72px
+    & .user__check
+      display: none
+    & .user__text
+      color: var(--divider)
+    & .user__buttons
+      display: none
