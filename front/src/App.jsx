@@ -1,5 +1,6 @@
 import "./App.sass";
 import Nav from "./components/nav/nav";
+import LogsPage from "./pages/logs-page/logs-page";
 import UsersPage from "./pages/users-page/users-page";
 
 const App = () => {
@@ -8,7 +9,8 @@ const App = () => {
       <div className="container">
         <Nav />
         <div className="app__pages">
-          <UsersPage />
+          {/* <UsersPage />
+          <LogsPage /> */}
         </div>
       </div>
     </div>

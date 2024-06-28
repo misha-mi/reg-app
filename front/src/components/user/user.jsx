@@ -1,4 +1,6 @@
 import "./user.sass";
+import trash from "../../assets/icons/trash.png";
+
 import Button from "../../ui/button/button";
 
 const User = ({ name, login, domain, id, isColumnName }) => {
@@ -17,7 +19,7 @@ const User = ({ name, login, domain, id, isColumnName }) => {
       <div className="user__buttons">
         <Button color={"blue"}>Logs</Button>
         <Button color={"red"}>
-          <div className="button__img"></div>
+          <img src={trash} alt="trash" className="button__img" />
         </Button>
       </div>
     </div>

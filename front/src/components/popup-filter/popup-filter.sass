@@ -1,0 +1,28 @@
+.popup-filter
+  position: relative
+  &__wrapper
+    display: none
+    flex-direction: column
+    width: 100%
+    border-radius: 5px
+    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25)
+    background-color: var(--nothing)
+    position: absolute
+    top: 120%
+  &_open
+    display: flex
+  &__tab
+    text-align: center
+    padding: 10px
+    border: none
+    background-color: transparent
+    border-bottom: 2px solid rgba(0,0,0, 0.3)
+    font-size: 20px
+    cursor: pointer
+    &:last-child
+      border: none
+      border-radius: 0px 0px 5px 5px
+    &:nth-child(1)
+      border-radius: 5px 5px 0px 0px
+  &_active
+    background-color: var(--logs)
