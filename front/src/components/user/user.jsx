@@ -3,7 +3,7 @@ import trash from "../../assets/icons/trash.png";
 
 import Button from "../../ui/button/button";
 
-const User = ({ name, login, domain, id, isColumnName }) => {
+const User = ({ name, login, domain, id, isColumnName, handlerRemove }) => {
   return (
     <div className={`user${isColumnName ? " user__column-name" : ""}`}>
       <label className="user__check">
@@ -18,7 +18,7 @@ const User = ({ name, login, domain, id, isColumnName }) => {
       </div>
       <div className="user__buttons">
         <Button color={"blue"}>Logs</Button>
-        <Button color={"red"}>
+        <Button color={"red"} onClick={() => handlerRemove(name)}>
           <img src={trash} alt="trash" className="button__img" />
         </Button>
       </div>

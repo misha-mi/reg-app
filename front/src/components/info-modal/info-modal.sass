@@ -1,0 +1,28 @@
+.info-modal
+  position: absolute
+  width: 100vw
+  height: 100vh
+  top: 0px
+  left: 0px
+  background-color: rgba(0, 0, 0, 0.5)
+  display: none
+  justify-content: center
+  align-items: center
+  &__wrapper
+    padding: 20px
+    background-color: white
+    border-radius: 10px
+    width: 250px
+  &__desc
+    font-size: 20px
+    margin-bottom: 10px
+    text-align: center
+  &__buttons
+    display: flex
+    justify-content: space-between
+    & .button:nth-child(1)
+      width: 140px
+    & .button:nth-child(2)
+      width: 50px
+  &_open
+    display: flex

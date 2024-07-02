@@ -1,43 +1,42 @@
 export class UserRepository {
+  constructor(prismaClient) {
+    this.prismaClient = prismaClient;
+  }
 
-    constructor(prismaClient) {
-        this.prismaClient = prismaClient;
-    }
+  async create({ login, name, password, role }) {
+    return this.prismaClient.user.create({
+      data: { login, name, password, role },
+    });
+  }
 
-    async create({login, name, password, role}) {
-        return this.prismaClient.user.create({
-            data: {login, name, password, role}
-        });
-    }
+  async find(login) {
+    return this.prismaClient.user.findFirst({
+      where: { login },
+    });
+  }
 
-    async find(login) {
-        return this.prismaClient.user.findFirst({
-            where: { login }
-        });
-    }
+  async setToken(id, token) {
+    return this.prismaClient.user.update({
+      where: { id },
+      data: { token },
+    });
+  }
 
-    async setToken(login, token) { // убрать
-        return this.prismaClient.user.update({
-            where: { login },
-            data: { token }
-        })
-    }
+  async getUser(id) {
+    return this.prismaClient.user.findFirst({
+      where: { id },
+    });
+  }
 
-    async getUser(id) {
-        return this.prismaClient.user.findFirst({
-            where: {id}
-        })
-    }
+  async getAll() {
+    return this.prismaClient.user.findMany({
+      where: { role: "user" },
+    });
+  }
 
-    async getAll() {
-        return this.prismaClient.user.findMany({
-            where: {role: "user"}
-        });
-    }
-
-    async remove(id) {
-        return this.prismaClient.user.delete({
-            where: {id}
-        })
-    }
+  async remove(id) {
+    return this.prismaClient.user.delete({
+      where: { id },
+    });
+  }
 }
