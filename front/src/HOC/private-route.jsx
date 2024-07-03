@@ -4,7 +4,7 @@ import getUser from "../services/get-user";
 
 const PrivateRoute = ({ forAuthorized, setRole, role }) => {
   const to = forAuthorized ? "/auth" : "/";
-  const [isLoadin, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {

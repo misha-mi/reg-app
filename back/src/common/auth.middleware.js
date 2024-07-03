@@ -8,7 +8,8 @@ export class AuthMiddleware {
   }
 
   execute(req, res, next) {
-    const token = req.headers.cookie;
+    const cookies = req.headers?.cookie?.split("; ");
+    const token = cookies?.filter((item) => item.includes("accessToken"))[0];
     if (!token) {
       next(new HTTPError(403, "The token is missing", this.context));
     }
