@@ -58,19 +58,21 @@ const UsersPage = () => {
           id={"ID"}
           isColumnName
         />
-        {users.map(({ id, login, name }) => {
-          const [loginName, domain] = login.split("@");
-          return (
-            <User
-              name={name}
-              login={loginName}
-              domain={domain}
-              id={id}
-              key={id}
-              handlerRemove={setIsOpenDeleteModal}
-            />
-          );
-        })}
+        <div className="users-page__users">
+          {users.map(({ id, login, name }) => {
+            const [loginName, domain] = login.split("@");
+            return (
+              <User
+                name={name}
+                login={loginName}
+                domain={domain}
+                id={id}
+                key={id}
+                handlerRemove={setIsOpenDeleteModal}
+              />
+            );
+          })}
+        </div>
       </div>
       <CreateModal
         isOpen={isOpenCreateModal}
