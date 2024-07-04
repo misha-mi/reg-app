@@ -5,7 +5,7 @@ import Input from "../../ui/input/input";
 import "./create-modal.sass";
 import postCreate from "../../services/post-create";
 
-const CreateModal = ({ isOpen, handlerClose, openInfoModal }) => {
+const CreateModal = ({ isOpen, handlerClose, openInfoModal, setUsers }) => {
   const [name, setName] = useState("");
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -17,8 +17,9 @@ const CreateModal = ({ isOpen, handlerClose, openInfoModal }) => {
     setErrors([]);
     setIsLoading(true);
     postCreate({ name, login, password })
-      .then(() => {
+      .then(({ data }) => {
         openInfoModal("The account was created successfully");
+        setUsers((state) => [...state, data]);
       })
       .catch((res) => setErrors(res.response.data.error.split(",")))
       .finally(() => setIsLoading(false));

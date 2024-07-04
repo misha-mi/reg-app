@@ -66,7 +66,9 @@ export class UserController extends BaseContoller {
       return next(new HTTPError(422, "The user already exists", "register"));
     }
     this.logger.log(`[register] User has been created. (name: ${result.name})`);
-    this.ok(res, { login: result.login });
+    const { login, name, id } = result;
+    const [loginName, domain] = login.split("@");
+    this.ok(res, { login: loginName, domain, name, id });
   }
 
   async login(req, res, next) {
@@ -108,7 +110,7 @@ export class UserController extends BaseContoller {
       next(new HTTPError(422, "There is no user with this ID", "removeUser"));
     } else {
       this.logger.log(`[removeUser] The user has been deleted (id: ${id})`);
-      this.ok(res, "Deleted successfully");
+      this.ok(res, user.id);
     }
   }
 
@@ -125,7 +127,8 @@ export class UserController extends BaseContoller {
         `[getUser] The user's data has been received (id: ${userId})`
       );
       const { login, name, id, role } = user;
-      this.ok(res, { login, name, id, role });
+      const [loginName, domain] = login.split("@");
+      this.ok(res, { login: loginName, domain, name, id, role });
     }
   }
 }

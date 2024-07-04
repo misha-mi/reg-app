@@ -31,7 +31,6 @@ const UsersPage = () => {
   };
 
   const openInfoModal = (message) => {
-    console.log(123);
     setIsOpenDeleteModal(false);
     setIsOpenCreateModal(false);
     setIsOpenInfoModal(message);
@@ -39,8 +38,9 @@ const UsersPage = () => {
 
   const handlerDelete = () => {
     deleteUser(isOpenDeleteModal)
-      .then(() => {
+      .then(({ data }) => {
         openInfoModal("The account was deleted successfully");
+        setUsers((state) => state.filter((item) => item.id !== data));
       })
       .catch(() => console.log("error"));
   };
@@ -59,12 +59,11 @@ const UsersPage = () => {
           isColumnName
         />
         <div className="users-page__users">
-          {users.map(({ id, login, name }) => {
-            const [loginName, domain] = login.split("@");
+          {users.map(({ id, login, name, domain }) => {
             return (
               <User
                 name={name}
-                login={loginName}
+                login={login}
                 domain={domain}
                 id={id}
                 key={id}
@@ -78,6 +77,7 @@ const UsersPage = () => {
         isOpen={isOpenCreateModal}
         handlerClose={handlerClose}
         openInfoModal={openInfoModal}
+        setUsers={setUsers}
       />
       <InfoModal
         desc={`Are you sure you want to delete the user ${isOpenDeleteModal}`}
