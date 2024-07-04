@@ -6,6 +6,7 @@ import "./users-page.sass";
 import InfoModal from "../../components/info-modal/info-modal";
 import Button from "../../ui/button/button";
 import getUsers from "../../services/get-users";
+import deleteUser from "../../services/delete-user";
 
 const UsersPage = () => {
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
@@ -25,6 +26,12 @@ const UsersPage = () => {
       setIsOpenCreateModal(false);
       setIsOpenInfoModal(false);
     }
+  };
+
+  const handlerDelete = () => {
+    deleteUser(isOpenInfoModal)
+      .then(() => console.log("succes remove"))
+      .catch(() => console.log("error"));
   };
 
   return (
@@ -62,7 +69,9 @@ const UsersPage = () => {
         isOpen={isOpenInfoModal}
       >
         <div className="info-modal__buttons">
-          <Button color={"red"}>Remove</Button>
+          <Button color={"red"} onClick={handlerDelete}>
+            Remove
+          </Button>
           <Button color={"green"} onClick={() => setIsOpenInfoModal(false)}>
             No
           </Button>

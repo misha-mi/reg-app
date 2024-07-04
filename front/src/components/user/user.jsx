@@ -18,7 +18,7 @@ const User = ({ name, login, domain, id, isColumnName, handlerRemove }) => {
       </div>
       <div className="user__buttons">
         <Button color={"blue"}>Logs</Button>
-        <Button color={"red"} onClick={() => handlerRemove(name)}>
+        <Button color={"red"} onClick={() => handlerRemove(id)}>
           <img src={trash} alt="trash" className="button__img" />
         </Button>
       </div>
