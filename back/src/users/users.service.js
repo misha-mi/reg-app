@@ -1,9 +1,25 @@
 import { User } from "./user.entity.js";
 import jsonwebtoken from "jsonwebtoken";
+import { exec } from "child_process";
+import { stderr, stdout } from "process";
 
 export class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
+  }
+
+  doCommandLine(command, serviceName) {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.log(`[${serviceName}] error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.log(`[${serviceName}] stderr: ${stderr}`);
+        return;
+      }
+      console.log(`[${serviceName}] stdout: ${stdout}`);
+    });
   }
 
   async createUser({ login, name, password }) {
@@ -13,6 +29,12 @@ export class UserService {
     }
     const newUser = new User({ login, name });
     await newUser.setPassword(password);
+    // this.doCommandLine(
+    //   `docker exec -it msg prosodyctl register ${newUser.login.split("@")[0]} ${
+    //     newUser.login.split("@")[1]
+    //   } ${password}`,
+    //   "msg-bs"
+    // );
     return this.userRepository.create(newUser);
   }
 
