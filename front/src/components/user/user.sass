@@ -22,10 +22,14 @@
     border-color: var(--success)
   &__info
     display: grid
-    grid-template-columns: 50px 50px 50px 200px
+    grid-template-columns: 50px 50px 50px 1fr
     gap: 70px
   &__text
     font-size: 20px
+  &__id
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
   &__buttons
     flex-grow: 1
     display: flex

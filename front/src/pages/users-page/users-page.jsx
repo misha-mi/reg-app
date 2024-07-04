@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ControllPanel from "../../components/controll-panel/controll-panel";
 import CreateModal from "../../components/create-modal/create-modal";
 import User from "../../components/user/user";
 import "./users-page.sass";
 import InfoModal from "../../components/info-modal/info-modal";
 import Button from "../../ui/button/button";
+import getUsers from "../../services/get-users";
 
 const UsersPage = () => {
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
   const [isOpenInfoModal, setIsOpenInfoModal] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    getUsers()
+      .then((res) => {
+        setUsers(res.data.users);
+      })
+      .catch(() => console.log("error"));
+  }, []);
 
   const handlerClose = (e) => {
     if (e.target.getAttribute("data-close")) {
@@ -31,34 +41,19 @@ const UsersPage = () => {
           isColumnName
           handlerRemove={setIsOpenInfoModal}
         />
-        <User
-          name={"Pasha"}
-          login={"Login"}
-          domain={"Domain"}
-          id={"0b09f17d-4407-48f1..."}
-          handlerRemove={setIsOpenInfoModal}
-        />
-        <User
-          name={"Max"}
-          login={"Login"}
-          domain={"Domain"}
-          id={"5c15e656-e67d-4ca9..."}
-          handlerRemove={setIsOpenInfoModal}
-        />
-        <User
-          name={"Anton"}
-          login={"Login"}
-          domain={"Domain"}
-          id={"66ac9f63-03ec-4120..."}
-          handlerRemove={setIsOpenInfoModal}
-        />
-        <User
-          name={"Kate"}
-          login={"Login"}
-          domain={"Domain"}
-          id={"0b09f17d-4407-48f1..."}
-          handlerRemove={setIsOpenInfoModal}
-        />
+        {users.map(({ id, login, name }) => {
+          const [loginName, domain] = login.split("@");
+          return (
+            <User
+              name={name}
+              login={loginName}
+              domain={domain}
+              id={id}
+              key={id}
+              handlerRemove={setIsOpenInfoModal}
+            />
+          );
+        })}
       </div>
       <CreateModal isOpen={isOpenCreateModal} handlerClose={handlerClose} />
       <InfoModal
