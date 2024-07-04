@@ -10,6 +10,7 @@ import deleteUser from "../../services/delete-user";
 
 const UsersPage = () => {
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const [isOpenInfoModal, setIsOpenInfoModal] = useState(false);
   const [users, setUsers] = useState([]);
 
@@ -24,13 +25,23 @@ const UsersPage = () => {
   const handlerClose = (e) => {
     if (e.target.getAttribute("data-close")) {
       setIsOpenCreateModal(false);
+      setIsOpenDeleteModal(false);
       setIsOpenInfoModal(false);
     }
   };
 
+  const openInfoModal = (message) => {
+    console.log(123);
+    setIsOpenDeleteModal(false);
+    setIsOpenCreateModal(false);
+    setIsOpenInfoModal(message);
+  };
+
   const handlerDelete = () => {
-    deleteUser(isOpenInfoModal)
-      .then(() => console.log("succes remove"))
+    deleteUser(isOpenDeleteModal)
+      .then(() => {
+        openInfoModal("The account was deleted successfully");
+      })
       .catch(() => console.log("error"));
   };
 
@@ -46,7 +57,6 @@ const UsersPage = () => {
           domain={"Domain"}
           id={"ID"}
           isColumnName
-          handlerRemove={setIsOpenInfoModal}
         />
         {users.map(({ id, login, name }) => {
           const [loginName, domain] = login.split("@");
@@ -57,23 +67,42 @@ const UsersPage = () => {
               domain={domain}
               id={id}
               key={id}
-              handlerRemove={setIsOpenInfoModal}
+              handlerRemove={setIsOpenDeleteModal}
             />
           );
         })}
       </div>
-      <CreateModal isOpen={isOpenCreateModal} handlerClose={handlerClose} />
-      <InfoModal
-        desc={`Are you sure you want to delete the user ${isOpenInfoModal}`}
+      <CreateModal
+        isOpen={isOpenCreateModal}
         handlerClose={handlerClose}
-        isOpen={isOpenInfoModal}
+        openInfoModal={openInfoModal}
+      />
+      <InfoModal
+        desc={`Are you sure you want to delete the user ${isOpenDeleteModal}`}
+        handlerClose={handlerClose}
+        isOpen={isOpenDeleteModal}
       >
         <div className="info-modal__buttons">
           <Button color={"red"} onClick={handlerDelete}>
             Remove
           </Button>
-          <Button color={"green"} onClick={() => setIsOpenInfoModal(false)}>
+          <Button color={"green"} onClick={() => setIsOpenDeleteModal(false)}>
             No
+          </Button>
+        </div>
+      </InfoModal>
+      <InfoModal
+        desc={isOpenInfoModal}
+        handlerClose={handlerClose}
+        isOpen={isOpenInfoModal}
+      >
+        <div className="info-modal_tac">
+          <Button
+            color={"green"}
+            onClick={() => setIsOpenInfoModal(false)}
+            classNames={["button_w215"]}
+          >
+            Ok
           </Button>
         </div>
       </InfoModal>

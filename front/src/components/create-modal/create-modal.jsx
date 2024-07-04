@@ -5,16 +5,23 @@ import Input from "../../ui/input/input";
 import "./create-modal.sass";
 import postCreate from "../../services/post-create";
 
-const CreateModal = ({ isOpen, handlerClose }) => {
+const CreateModal = ({ isOpen, handlerClose, openInfoModal }) => {
   const [name, setName] = useState("");
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const createUser = (e) => {
     e.preventDefault();
+    setErrors([]);
+    setIsLoading(true);
     postCreate({ name, login, password })
-      .then(() => console.log("success"))
-      .catch(() => console.log("error"));
+      .then(() => {
+        openInfoModal("The account was created successfully");
+      })
+      .catch((res) => setErrors(res.response.data.error.split(",")))
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -27,18 +34,37 @@ const CreateModal = ({ isOpen, handlerClose }) => {
         <form action="#" className="create-modal__form" onSubmit={createUser}>
           <div className="create-modal__title">Name</div>
           <div className="create-modal__input">
-            <Input value={name} setValue={setName} />
+            <Input
+              value={name}
+              setValue={setName}
+              error={errors.filter((item) => item.includes("name"))[0]}
+            />
           </div>
           <div className="create-modal__title">Login</div>
           <div className="create-modal__input">
-            <Input value={login} setValue={setLogin} />
+            <Input
+              value={login}
+              setValue={setLogin}
+              error={errors.filter((item) => item.includes("login"))[0]}
+            />
           </div>
           <div className="create-modal__title">Password</div>
           <div className="create-modal__input">
-            <Input value={password} setValue={setPassword} />
+            <Input
+              value={password}
+              setValue={setPassword}
+              error={errors.filter((item) => item.includes("password"))[0]}
+            />
+          </div>
+          <div className="create-modal__error">
+            {errors.filter((item) => item.includes("already"))[0]}
           </div>
           <div className="create-modal__button">
-            <Button classNames={["button_w215"]} color={"blue"}>
+            <Button
+              classNames={["button_w215"]}
+              color={"blue"}
+              isLoading={isLoading}
+            >
               Create
             </Button>
           </div>

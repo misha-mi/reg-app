@@ -10,6 +10,8 @@
     height: 23px
     width: 23px
     display: block
+  &__spinner
+    height: 23px
   &_red
     background-color: var(--error)
   &_green
@@ -20,3 +22,7 @@
     width: 215px
   &:active
     box-shadow: inset 2px 4px 4px rgba(0, 0, 0, 0.25)
+  &:disabled
+    background-color: #E4E4E4
+    &:active
+      box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25)

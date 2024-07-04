@@ -77,7 +77,7 @@ export class UserController extends BaseContoller {
       res.cookie("accessToken", jwt, { maxAge: 3600000, httpOnly: true });
       this.ok(res, result.role);
     } else {
-      next(new HTTPError(401, "Unauthorized", "login"));
+      next(new HTTPError(401, "Invalid login or password", "login"));
     }
   }
 
