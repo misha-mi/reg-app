@@ -56,7 +56,7 @@ permit=0.0.0.0/0.0.0.0
 callerid=${phoneNumber} <${phoneNumber}>
 callcounter=yes
 faxdetect=no
-    `;
+`;
     fs.appendFileSync(
       "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
       configString,
@@ -67,7 +67,7 @@ faxdetect=no
         console.log(data);
       }
     );
-    this.doCommandLine("docker exec izpbx fwconsole reload");
+    this.doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
   }
 
   removeSipUser(phoneNumber) {
@@ -81,8 +81,7 @@ faxdetect=no
           console.log(data); // выводим считанные данные
         }
       )
-      .split(/[\d{3,5}]]/);
-
+      .split("\n\n");
     const configString = sipUsers.reduce((string, sipUser) => {
       if (sipUser.includes(`[${phoneNumber}]`)) {
         return string;
@@ -101,6 +100,7 @@ faxdetect=no
         console.log(data);
       }
     );
+    this.doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
   }
 
   async createUser({ login, name, password }) {
@@ -111,16 +111,32 @@ faxdetect=no
     const newUser = new User({ login, name });
     await newUser.setPassword(password);
     await this.doCommandLine(
-      `docker exec msg prosodyctl register ${newUser.login.split("@")[0]} ${
+      `docker exec -i msg prosodyctl register ${newUser.login.split("@")[0]} ${
         newUser.login.split("@")[1]
       } ${password}`,
       "msg-bs"
     );
     await this.doCommandLine(
-      `docker exec mail_bs /opt/iredmail/bin/create_user ${login} ${password} 0`
+      `docker exec -i mail_bs /opt/iredmail/bin/create_user ${login} ${password} 0`,
+      "mail-bs"
     );
     this.createSipUser(1005, password);
     return this.userRepository.create(newUser);
+  }
+
+  async removeUser(id) {
+    try {
+      const { login } = await this.userRepository.getUser(id);
+      this.removeSipUser(1005);
+      await this.doCommandLine(
+        `docker exec -i msg prosodyctl deluser ${login}`,
+        "msg-bs"
+      );
+      const user = await this.userRepository.remove(id);
+      return user;
+    } catch {
+      return null;
+    }
   }
 
   async validateUser({ login, password }) {
@@ -184,15 +200,6 @@ faxdetect=no
       pass: user.password,
       ip: "something",
     };
-  }
-
-  async removeUser(id) {
-    try {
-      const user = await this.userRepository.remove(id);
-      return user;
-    } catch {
-      return null;
-    }
   }
 
   async getUser(id) {
