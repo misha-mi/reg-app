@@ -13,6 +13,7 @@ const UsersPage = () => {
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const [isOpenInfoModal, setIsOpenInfoModal] = useState(false);
   const [users, setUsers] = useState([]);
+  const [idMarkedUsers, setIdMarkedUsers] = useState([]);
 
   useEffect(() => {
     getUsers()
@@ -68,6 +69,8 @@ const UsersPage = () => {
                 id={id}
                 key={id}
                 handlerRemove={setIsOpenDeleteModal}
+                setCheck={setIdMarkedUsers}
+                check={idMarkedUsers.includes(id)}
               />
             );
           })}
@@ -78,6 +81,7 @@ const UsersPage = () => {
         handlerClose={handlerClose}
         openInfoModal={openInfoModal}
         setUsers={setUsers}
+        openRemoveModal={() => setIsOpenDeleteModal(false)}
       />
       <InfoModal
         desc={`Are you sure you want to delete the user ${isOpenDeleteModal}`}

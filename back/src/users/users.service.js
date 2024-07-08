@@ -1,14 +1,14 @@
 import { User } from "./user.entity.js";
 import jsonwebtoken from "jsonwebtoken";
 import { exec } from "child_process";
-import { stderr, stdout } from "process";
+import fs from "fs";
 
 export class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
   }
 
-  doCommandLine(command, serviceName) {
+  async doCommandLine(command, serviceName) {
     exec(command, (error, stdout, stderr) => {
       if (error) {
         console.log(`[${serviceName}] error: ${error.message}`);
@@ -22,6 +22,87 @@ export class UserService {
     });
   }
 
+  createSipUser(phoneNumber, password) {
+    const configString = `
+[${phoneNumber}]
+deny=0.0.0.0/0.0.0.0
+secret=${password}
+dtmfmode=rfc2833
+canreinvite=no
+context=from-internal
+host=dynamic
+defaultuser=
+trustrpid=yes
+user_eq_phone=no
+sendrpid=pai
+type=friend
+session-timers=accept
+nat=force_rport,comedia
+port=5060
+qualify=yes
+qualifyfreq=60
+transport=udp
+avpf=no
+force_avp=no
+icesupport=no
+rtcp_mux=no
+encryption=no
+videosupport=yes
+namedcallgroup=
+namedpickupgroup=
+dial=SIP/${phoneNumber}
+accountcode=
+permit=0.0.0.0/0.0.0.0
+callerid=${phoneNumber} <${phoneNumber}>
+callcounter=yes
+faxdetect=no
+    `;
+    fs.appendFileSync(
+      "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
+      configString,
+      function (error) {
+        if (error) throw error; // если возникла ошибка
+        console.log("Асинхронная запись файла завершена. Содержимое файла:");
+        let data = fs.readFileSync("hello.txt", "utf8");
+        console.log(data);
+      }
+    );
+    this.doCommandLine("docker exec izpbx fwconsole reload");
+  }
+
+  removeSipUser(phoneNumber) {
+    let sipUsers = fs
+      .readFileSync(
+        "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf",
+        "utf8",
+        function (error, data) {
+          console.log("Асинхронное чтение файла");
+          if (error) throw error; // если возникла ошибка
+          console.log(data); // выводим считанные данные
+        }
+      )
+      .split(/[\d{3,5}]]/);
+
+    const configString = sipUsers.reduce((string, sipUser) => {
+      if (sipUser.includes(`[${phoneNumber}]`)) {
+        return string;
+      } else {
+        return string + "\n\n" + sipUser;
+      }
+    });
+
+    fs.writeFileSync(
+      "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
+      configString,
+      function (error) {
+        if (error) throw error; // если возникла ошибка
+        console.log("Асинхронная запись файла завершена. Содержимое файла:");
+        let data = fs.readFileSync("hello.txt", "utf8");
+        console.log(data);
+      }
+    );
+  }
+
   async createUser({ login, name, password }) {
     const isExistUser = await this.userRepository.find(login);
     if (isExistUser) {
@@ -29,12 +110,16 @@ export class UserService {
     }
     const newUser = new User({ login, name });
     await newUser.setPassword(password);
-    // this.doCommandLine(
-    //   `docker exec -it msg prosodyctl register ${newUser.login.split("@")[0]} ${
-    //     newUser.login.split("@")[1]
-    //   } ${password}`,
-    //   "msg-bs"
-    // );
+    await this.doCommandLine(
+      `docker exec msg prosodyctl register ${newUser.login.split("@")[0]} ${
+        newUser.login.split("@")[1]
+      } ${password}`,
+      "msg-bs"
+    );
+    await this.doCommandLine(
+      `docker exec mail_bs /opt/iredmail/bin/create_user ${login} ${password} 0`
+    );
+    this.createSipUser(1005, password);
     return this.userRepository.create(newUser);
   }
 

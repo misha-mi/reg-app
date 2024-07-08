@@ -3,11 +3,30 @@ import trash from "../../assets/icons/trash.png";
 
 import Button from "../../ui/button/button";
 
-const User = ({ name, login, domain, id, isColumnName, handlerRemove }) => {
+const User = ({
+  name,
+  login,
+  domain,
+  id,
+  isColumnName,
+  handlerRemove,
+  setCheck,
+  check,
+}) => {
+  const changeCheck = () => {
+    setCheck((state) => {
+      if (check) {
+        return state.filter((item) => item !== id);
+      } else {
+        return [...state, id];
+      }
+    });
+  };
+
   return (
     <div className={`user${isColumnName ? " user__column-name" : ""}`}>
       <label className="user__check">
-        <input type="checkbox" />
+        <input type="checkbox" checked={check} onChange={changeCheck} />
         <span className="user__checkmark"></span>
       </label>
       <div className="user__info">
