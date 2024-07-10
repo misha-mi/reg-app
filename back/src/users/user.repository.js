@@ -3,15 +3,21 @@ export class UserRepository {
     this.prismaClient = prismaClient;
   }
 
-  async create({ login, name, password, role }) {
+  async create({ login, name, password, role, number }) {
     return this.prismaClient.user.create({
-      data: { login, name, password, role },
+      data: { login, name, password, role, number },
     });
   }
 
   async find(login) {
     return this.prismaClient.user.findFirst({
       where: { login },
+    });
+  }
+
+  async findByNumber(number) {
+    return this.prismaClient.user.findFirst({
+      where: { number },
     });
   }
 

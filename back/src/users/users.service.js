@@ -22,7 +22,7 @@ export class UserService {
     });
   }
 
-  createSipUser(phoneNumber, password) {
+  createSIPUser(phoneNumber, password) {
     const configString = `
 [${phoneNumber}]
 deny=0.0.0.0/0.0.0.0
@@ -70,7 +70,7 @@ faxdetect=no
     this.doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
   }
 
-  removeSipUser(phoneNumber) {
+  removeSIPUser(phoneNumber) {
     let sipUsers = fs
       .readFileSync(
         "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf",
@@ -86,9 +86,9 @@ faxdetect=no
       if (sipUser.includes(`[${phoneNumber}]`)) {
         return string;
       } else {
-        return string + "\n\n" + sipUser;
+        return string + sipUser + "\n\n";
       }
-    });
+    }, "");
 
     fs.writeFileSync(
       "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
@@ -103,12 +103,38 @@ faxdetect=no
     this.doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
   }
 
-  async createUser({ login, name, password }) {
-    const isExistUser = await this.userRepository.find(login);
-    if (isExistUser) {
-      return null;
+  async removeMailUser(login) {
+    const [loginName, domain] = login.split("@");
+    const arrSumbol = loginName.split("");
+    if (arrSumbol.length < 3) {
+      arrSumbol.push("_", "_", "_");
     }
-    const newUser = new User({ login, name });
+
+    const removeFromDB = `docker exec -i mail_bs mysql<<MYSQL_SCRIPT 
+USE vmail;
+DELETE FROM mailbox WHERE username="${login}";
+MYSQL_SCRIPT`;
+    const removeUsersFiles = `docker exec -i mail_bs rm -rf /var/vmail/vmail1/${domain}/${arrSumbol[0]}/${arrSumbol[1]}/${arrSumbol[2]}/${loginName}-*`;
+
+    await this.doCommandLine(removeFromDB, "mail-bs");
+    await this.doCommandLine(removeUsersFiles, "mail-bs");
+  }
+
+  async createUser({ login, name, password, number }) {
+    const isExistEmail = await this.userRepository.find(login);
+    const isExistNumber = await this.userRepository.findByNumber(number);
+    if (isExistEmail && isExistNumber) {
+      return [
+        "A user with this login already exists",
+        "A user with this SIP number already exists",
+      ];
+    } else if (isExistEmail) {
+      return "A user with this login already exists";
+    } else if (isExistNumber) {
+      return "A user with this SIP number already exists";
+    }
+    const newUser = new User({ login, name, number });
+
     await newUser.setPassword(password);
     await this.doCommandLine(
       `docker exec -i msg prosodyctl register ${newUser.login.split("@")[0]} ${
@@ -120,18 +146,20 @@ faxdetect=no
       `docker exec -i mail_bs /opt/iredmail/bin/create_user ${login} ${password} 0`,
       "mail-bs"
     );
-    this.createSipUser(1005, password);
+    this.createSIPUser(number, password);
+
     return this.userRepository.create(newUser);
   }
 
   async removeUser(id) {
     try {
-      const { login } = await this.userRepository.getUser(id);
-      this.removeSipUser(1005);
+      const { login, number } = await this.userRepository.getUser(id);
+      this.removeSIPUser(number);
       await this.doCommandLine(
         `docker exec -i msg prosodyctl deluser ${login}`,
         "msg-bs"
       );
+      await this.removeMailUser(login);
       const user = await this.userRepository.remove(id);
       return user;
     } catch {

@@ -62,13 +62,13 @@ export class UserController extends BaseContoller {
 
   async register({ body }, res, next) {
     const result = await this.userService.createUser(body);
-    if (!result) {
-      return next(new HTTPError(422, "The user already exists", "register"));
+    if (typeof result === "string" || Array.isArray(result)) {
+      return next(new HTTPError(422, result, "register"));
     }
     this.logger.log(`[register] User has been created. (name: ${result.name})`);
-    const { login, name, id } = result;
+    const { login, name, id, number } = result;
     const [loginName, domain] = login.split("@");
-    this.ok(res, { login: loginName, domain, name, id });
+    this.ok(res, { login: loginName, domain, name, id, number });
   }
 
   async login(req, res, next) {

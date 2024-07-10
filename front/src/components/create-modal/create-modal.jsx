@@ -8,6 +8,7 @@ import postCreate from "../../services/post-create";
 const CreateModal = ({ isOpen, handlerClose, openInfoModal, setUsers }) => {
   const [name, setName] = useState("");
   const [login, setLogin] = useState("");
+  const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +17,7 @@ const CreateModal = ({ isOpen, handlerClose, openInfoModal, setUsers }) => {
     e.preventDefault();
     setErrors([]);
     setIsLoading(true);
-    postCreate({ name, login, password })
+    postCreate({ name, login, password, number })
       .then(({ data }) => {
         openInfoModal("The account was created successfully");
         setUsers((state) => [...state, data]);
@@ -49,6 +50,14 @@ const CreateModal = ({ isOpen, handlerClose, openInfoModal, setUsers }) => {
               error={errors.filter((item) => item.includes("login"))[0]}
             />
           </div>
+          <div className="create-modal__title">SIP Number</div>
+          <div className="create-modal__input">
+            <Input
+              value={number}
+              setValue={setNumber}
+              error={errors.filter((item) => item.includes("number"))[0]}
+            />
+          </div>
           <div className="create-modal__title">Password</div>
           <div className="create-modal__input">
             <Input
@@ -56,9 +65,6 @@ const CreateModal = ({ isOpen, handlerClose, openInfoModal, setUsers }) => {
               setValue={setPassword}
               error={errors.filter((item) => item.includes("password"))[0]}
             />
-          </div>
-          <div className="create-modal__error">
-            {errors.filter((item) => item.includes("already"))[0]}
           </div>
           <div className="create-modal__button">
             <Button

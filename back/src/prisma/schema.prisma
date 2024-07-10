@@ -20,4 +20,5 @@ model User {
   role     String
   name     String
   token    String?
+  number   String? @unique
 }
