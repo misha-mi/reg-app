@@ -12,6 +12,7 @@ const User = ({
   handlerRemove,
   setCheck,
   check,
+  number,
 }) => {
   const changeCheck = () => {
     setCheck((state) => {
@@ -33,6 +34,7 @@ const User = ({
         <div className="user__name user__text">{name}</div>
         <div className="user__login user__text">{login}</div>
         <div className="user__domain user__text">{domain}</div>
+        <div className="user__number user__text">{number}</div>
         <div className="user__id user__text">{id}</div>
       </div>
       <div className="user__buttons">

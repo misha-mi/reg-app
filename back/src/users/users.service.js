@@ -210,9 +210,9 @@ MYSQL_SCRIPT`;
 
   async getUsers() {
     const users = await this.userRepository.getAll();
-    return users.map(({ id, login, name }) => {
+    return users.map(({ id, login, name, number }) => {
       const [loginName, domain] = login.split("@");
-      return { id, login: loginName, domain, name };
+      return { id, login: loginName, domain, name, number };
     });
   }
 

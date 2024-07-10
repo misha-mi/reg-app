@@ -56,16 +56,18 @@ const UsersPage = () => {
           name={"Name"}
           login={"Login"}
           domain={"Domain"}
+          number={"SIP"}
           id={"ID"}
           isColumnName
         />
         <div className="users-page__users">
-          {users.map(({ id, login, name, domain }) => {
+          {users.map(({ id, login, name, domain, number }) => {
             return (
               <User
                 name={name}
                 login={login}
                 domain={domain}
+                number={number}
                 id={id}
                 key={id}
                 handlerRemove={setIsOpenDeleteModal}
