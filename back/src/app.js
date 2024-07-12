@@ -3,13 +3,14 @@ import express from "express";
 import cors from "cors";
 
 export class App {
-  constructor(logger, userContoller, exeptionFilter) {
+  constructor(logger, userContoller, syncController, exeptionFilter) {
     this.app = express();
     this.port = 8000;
     this.server;
     this.logger = logger;
     this.userContoller = userContoller;
     this.exeptionFilter = exeptionFilter;
+    this.syncController = syncController;
   }
 
   useMiddleware() {
@@ -18,6 +19,7 @@ export class App {
 
   useRoutes() {
     this.app.use("/users", this.userContoller.router);
+    this.app.use("/sync", this.syncController.router);
   }
 
   useExeptionFilters() {

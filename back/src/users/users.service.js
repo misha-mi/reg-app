@@ -58,7 +58,7 @@ callcounter=yes
 faxdetect=no
 `;
     fs.appendFileSync(
-      "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
+      "/home/user/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
       configString,
       function (error) {
         if (error) throw error; // если возникла ошибка
@@ -73,7 +73,7 @@ faxdetect=no
   removeSIPUser(phoneNumber) {
     let sipUsers = fs
       .readFileSync(
-        "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf",
+        "/home/user/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf",
         "utf8",
         function (error, data) {
           console.log("Асинхронное чтение файла");
@@ -91,7 +91,7 @@ faxdetect=no
     }, "");
 
     fs.writeFileSync(
-      "/home/isterika/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
+      "/home/user/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf", // .env
       configString,
       function (error) {
         if (error) throw error; // если возникла ошибка
@@ -210,9 +210,9 @@ MYSQL_SCRIPT`;
 
   async getUsers() {
     const users = await this.userRepository.getAll();
-    return users.map(({ id, login, name, number }) => {
+    return users.map(({ id, login, name }) => {
       const [loginName, domain] = login.split("@");
-      return { id, login: loginName, domain, name, number };
+      return { id, login: loginName, domain, name };
     });
   }
 

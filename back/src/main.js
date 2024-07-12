@@ -5,6 +5,7 @@ import { UserService } from "./users/users.service.js";
 import { UserController } from "./users/users.controller.js";
 import { UserRepository } from "./users/user.repository.js";
 import { PrismaClient } from "@prisma/client";
+import { SyncController } from "./sync/sync.controller.js";
 
 async function bootstrap() {
   const logger = new LoggerService();
@@ -19,10 +20,12 @@ async function bootstrap() {
 
   const userRepository = new UserRepository(prismaClient);
   const userService = new UserService(userRepository);
+  const userContoller = new UserController(logger, userService);
 
   const app = new App(
     logger,
-    new UserController(logger, userService),
+    userContoller,
+    new SyncController(logger, userContoller),
     new ExeptionFilter(logger)
   );
   await app.init();
