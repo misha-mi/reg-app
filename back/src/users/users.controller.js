@@ -1,3 +1,4 @@
+import request from "request";
 import { AuthMiddleware } from "../common/auth.middleware.js";
 import { BaseContoller } from "../common/base.controller.js";
 import { ValidateMiddleware } from "../common/validate.middleware.js";
@@ -65,8 +66,27 @@ export class UserController extends BaseContoller {
     if (typeof result === "string" || Array.isArray(result)) {
       return next(new HTTPError(422, result, "register"));
     }
-    this.logger.log(`[register] User has been created. (name: ${result.name})`);
     const { login, name, id, number } = result;
+    request.post(
+      {
+        url: "http://192.168.2.6:8000/sync/register",
+        json: {
+          name,
+          login,
+          password: body.password,
+          number,
+          id,
+        },
+      },
+      (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("sync register success");
+        }
+      }
+    );
+    this.logger.log(`[register] User has been created. (name: ${result.name})`);
     const [loginName, domain] = login.split("@");
     this.ok(res, { login: loginName, domain, name, id, number });
   }
@@ -107,11 +127,24 @@ export class UserController extends BaseContoller {
     const id = req.params.id;
     const user = await this.userService.removeUser(id);
     if (!user) {
-      next(new HTTPError(422, "There is no user with this ID", "removeUser"));
-    } else {
-      this.logger.log(`[removeUser] The user has been deleted (id: ${id})`);
-      this.ok(res, user.id);
+      return next(
+        new HTTPError(422, "There is no user with this ID", "removeUser")
+      );
     }
+    request.delete(
+      {
+        url: `http://192.168.2.6:8000/sync/delete/${id}`,
+      },
+      (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("sync register success");
+        }
+      }
+    );
+    this.logger.log(`[removeUser] The user has been deleted (id: ${id})`);
+    this.ok(res, user.id);
   }
 
   async getUser(req, res, next) {
