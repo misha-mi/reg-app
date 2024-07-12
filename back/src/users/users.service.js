@@ -120,7 +120,7 @@ MYSQL_SCRIPT`;
     await this.doCommandLine(removeUsersFiles, "mail-bs");
   }
 
-  async createUser({ login, name, password, number }) {
+  async createUser({ login, name, password, number, id }) {
     const isExistEmail = await this.userRepository.find(login);
     const isExistNumber = await this.userRepository.findByNumber(number);
     if (isExistEmail && isExistNumber) {
@@ -133,7 +133,7 @@ MYSQL_SCRIPT`;
     } else if (isExistNumber) {
       return "A user with this SIP number already exists";
     }
-    const newUser = new User({ login, name, number });
+    const newUser = new User({ login, name, number, id });
 
     await newUser.setPassword(password);
     await this.doCommandLine(
