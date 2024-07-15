@@ -35,7 +35,8 @@ export class User {
   }
 
   async setPassword(pass) {
-    this._password = await bcryptjs.hash(pass, 10); // соль вытащить в env
+    console.log(process.env.PASSWORD_SALT);
+    this._password = await bcryptjs.hash(pass, +process.env.PASSWORD_SALT);
   }
 
   async comparePassword(pass) {

@@ -17,7 +17,7 @@ export class AuthMiddleware {
     try {
       const tokenData = jsonwebtoken.verify(
         token.replace("accessToken=", ""),
-        "secret"
+        process.env.JWT_SECRET
       );
       const interval = Math.floor(Date.now() / 1000) - tokenData.iat;
       if (!this.role.includes(tokenData.role)) {

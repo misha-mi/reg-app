@@ -3,7 +3,7 @@ import axios from "axios";
 export default function getUsers() {
   return axios({
     method: "GET",
-    url: "http://localhost:8000/users/getUsers",
+    url: `${process.env.REACT_APP_API_URL}/users/getUsers`,
     withCredentials: true,
   });
 }

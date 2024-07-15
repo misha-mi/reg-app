@@ -69,7 +69,7 @@ export class UserController extends BaseContoller {
     const { login, name, id, number } = result;
     request.post(
       {
-        url: "http://192.168.2.6:8000/sync/register",
+        url: `http://${process.env.OTHER_IP}:${process.env.OTHER_PORT}/sync/register`,
         json: {
           name,
           login,
@@ -133,7 +133,7 @@ export class UserController extends BaseContoller {
     }
     request.delete(
       {
-        url: `http://192.168.2.6:8000/sync/delete/${id}`,
+        url: `http://${process.env.OTHER_IP}:${process.env.OTHER_PORT}/sync/delete/${id}`,
       },
       (err) => {
         if (err) {
