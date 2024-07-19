@@ -2,9 +2,9 @@ import "./popup-filter.sass";
 import Button from "../../ui/button/button";
 import { useState } from "react";
 
-const PopupFilter = ({ tabsNames }) => {
+const PopupFilter = ({ tabsNames, activeTab, setActiveTab }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState(0);
+  // const [activeTab, setActiveTab] = useState(tabsNames[0]);
 
   return (
     <div className="popup-filter">
@@ -13,7 +13,7 @@ const PopupFilter = ({ tabsNames }) => {
         onClick={() => setIsOpen((state) => !state)}
         classNames={["button_w215"]}
       >
-        Search by {tabsNames[activeTab].toLowerCase()}
+        Search by {activeTab}
       </Button>
       <div
         className={`popup-filter__wrapper ${isOpen ? "popup-filter_open" : ""}`}
@@ -22,10 +22,10 @@ const PopupFilter = ({ tabsNames }) => {
           return (
             <button
               className={`popup-filter__tab ${
-                activeTab === id ? "popup-filter_active" : ""
+                activeTab === tabsNames[id] ? "popup-filter_active" : ""
               }`}
               onClick={() => {
-                setActiveTab(id);
+                setActiveTab(tabsNames[id].toLowerCase());
                 setIsOpen(false);
               }}
               key={id}

@@ -14,6 +14,8 @@ const UsersPage = () => {
   const [isOpenInfoModal, setIsOpenInfoModal] = useState(false);
   const [users, setUsers] = useState([]);
   const [idMarkedUsers, setIdMarkedUsers] = useState([]);
+  const [searchBy, setSearchBy] = useState("name");
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     getUsers()
@@ -51,6 +53,10 @@ const UsersPage = () => {
       <div className="users-page">
         <ControllPanel
           handlerOpenCreateModal={() => setIsOpenCreateModal(true)}
+          searchBy={searchBy}
+          setSearchBy={setSearchBy}
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
         />
         <User
           name={"Name"}
@@ -61,20 +67,22 @@ const UsersPage = () => {
           isColumnName
         />
         <div className="users-page__users">
-          {users.map(({ id, login, name, domain, number }) => {
-            return (
-              <User
-                name={name}
-                login={login}
-                domain={domain}
-                number={number}
-                id={id}
-                key={id}
-                handlerRemove={setIsOpenDeleteModal}
-                setCheck={setIdMarkedUsers}
-                check={idMarkedUsers.includes(id)}
-              />
-            );
+          {users.map((user) => {
+            const { id, login, name, domain, number } = user;
+            if (user[searchBy].includes(searchValue))
+              return (
+                <User
+                  name={name}
+                  login={login}
+                  domain={domain}
+                  number={number}
+                  id={id}
+                  key={id}
+                  handlerRemove={setIsOpenDeleteModal}
+                  setCheck={setIdMarkedUsers}
+                  check={idMarkedUsers.includes(id)}
+                />
+              );
           })}
         </div>
       </div>
@@ -86,7 +94,7 @@ const UsersPage = () => {
         openRemoveModal={() => setIsOpenDeleteModal(false)}
       />
       <InfoModal
-        desc={`Are you sure you want to delete the user ${isOpenDeleteModal}`}
+        desc={`Are you sure you want to delete the user ${isOpenDeleteModal}?`}
         handlerClose={handlerClose}
         isOpen={isOpenDeleteModal}
       >
