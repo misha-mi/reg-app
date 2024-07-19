@@ -7,10 +7,12 @@ import InfoModal from "../../components/info-modal/info-modal";
 import Button from "../../ui/button/button";
 import getUsers from "../../services/get-users";
 import deleteUser from "../../services/delete-user";
+import deleteUsers from "../../services/delete-users";
 
 const UsersPage = () => {
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+  const [isOpenDeleteMarkedModal, setIsOpenDeleteMarkedModal] = useState(false);
   const [isOpenInfoModal, setIsOpenInfoModal] = useState(false);
   const [users, setUsers] = useState([]);
   const [idMarkedUsers, setIdMarkedUsers] = useState([]);
@@ -29,6 +31,7 @@ const UsersPage = () => {
     if (e.target.getAttribute("data-close")) {
       setIsOpenCreateModal(false);
       setIsOpenDeleteModal(false);
+      setIsOpenDeleteMarkedModal(false);
       setIsOpenInfoModal(false);
     }
   };
@@ -36,6 +39,7 @@ const UsersPage = () => {
   const openInfoModal = (message) => {
     setIsOpenDeleteModal(false);
     setIsOpenCreateModal(false);
+    setIsOpenDeleteMarkedModal(false);
     setIsOpenInfoModal(message);
   };
 
@@ -48,6 +52,18 @@ const UsersPage = () => {
       .catch(() => console.log("error"));
   };
 
+  const handlerDeleteMarked = async () => {
+    deleteUsers(idMarkedUsers)
+      .then(() => {
+        openInfoModal("The accounts was deleted successfully");
+        setUsers((state) =>
+          state.filter((item) => !idMarkedUsers.includes(item.id))
+        );
+        setIdMarkedUsers([]);
+      })
+      .catch(console.log);
+  };
+
   return (
     <>
       <div className="users-page">
@@ -57,6 +73,8 @@ const UsersPage = () => {
           setSearchBy={setSearchBy}
           searchValue={searchValue}
           setSearchValue={setSearchValue}
+          setIsOpenDeleteModal={setIsOpenDeleteMarkedModal}
+          isDisableRemoveButton={!idMarkedUsers.length}
         />
         <User
           name={"Name"}
@@ -103,6 +121,23 @@ const UsersPage = () => {
             Remove
           </Button>
           <Button color={"green"} onClick={() => setIsOpenDeleteModal(false)}>
+            No
+          </Button>
+        </div>
+      </InfoModal>
+      <InfoModal
+        desc={`Are you sure you want to delete the marked user?`}
+        handlerClose={handlerClose}
+        isOpen={isOpenDeleteMarkedModal}
+      >
+        <div className="info-modal__buttons">
+          <Button color={"red"} onClick={handlerDeleteMarked}>
+            Remove
+          </Button>
+          <Button
+            color={"green"}
+            onClick={() => setIsOpenDeleteMarkedModal(false)}
+          >
             No
           </Button>
         </div>

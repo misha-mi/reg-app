@@ -239,4 +239,22 @@ MYSQL_SCRIPT`;
       return null;
     }
   }
+
+  async removeUsers(ids) {
+    try {
+      for (let i = 0; i < ids.length; i++) {
+        const { login, number } = await this.userRepository.getUser(ids[i]);
+        this.removeSIPUser(number);
+        await this.doCommandLine(
+          `docker exec -i msg prosodyctl deluser ${login}`,
+          "msg-bs"
+        );
+        await this.removeMailUser(login);
+        const user = await this.userRepository.remove(ids[i]);
+      }
+      return "success";
+    } catch {
+      return null;
+    }
+  }
 }

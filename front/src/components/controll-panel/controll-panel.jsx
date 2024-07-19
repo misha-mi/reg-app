@@ -12,6 +12,8 @@ const ControllPanel = ({
   setSearchBy,
   searchValue,
   setSearchValue,
+  setIsOpenDeleteModal,
+  isDisableRemoveButton,
 }) => {
   const tabsNames = isLogs
     ? ["Status", "Context", "ID", "Description"]
@@ -21,7 +23,13 @@ const ControllPanel = ({
     <DatePickerCustom />
   ) : (
     <>
-      <Button color={"red"}>Remove marked</Button>
+      <Button
+        color={"red"}
+        onClick={() => setIsOpenDeleteModal(true)}
+        disabled={isDisableRemoveButton}
+      >
+        Remove marked
+      </Button>
       <Button color={"blue"} onClick={handlerOpenCreateModal}>
         Create
       </Button>

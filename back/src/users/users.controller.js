@@ -51,6 +51,14 @@ export class UserController extends BaseContoller {
         ],
       },
       {
+        method: "delete",
+        path: "/deleteUsers",
+        func: this.removeUsers,
+        middlewares: [
+          new AuthMiddleware({ context: "delete", role: ["admin"] }),
+        ],
+      },
+      {
         method: "get",
         path: "/getUser",
         func: this.getUser,
@@ -163,5 +171,16 @@ export class UserController extends BaseContoller {
       const [loginName, domain] = login.split("@");
       this.ok(res, { login: loginName, domain, name, id, role });
     }
+  }
+
+  async removeUsers({ body }, res, next) {
+    const status = await this.userService.removeUsers(body);
+    if (!status) {
+      return next(new HTTPError(422, "Something broke down", "removeUsers"));
+    }
+    this.logger.log(
+      `[removeUsers] The users has been deleted (IDs: ${body.join(", ")})`
+    );
+    this.ok(res, status);
   }
 }
