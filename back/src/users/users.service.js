@@ -216,18 +216,31 @@ MYSQL_SCRIPT`;
     });
   }
 
-  async getConfig(id) {
+  async getConfig(id, password) {
     const user = await this.userRepository.getUser(id);
     if (!user) {
       return null;
     }
     const [login, domain] = user.login.split("@");
-    return {
+    const config = {
       login,
+      password: password,
+      ip: ["192.168.2.10"],
       domain,
-      pass: user.password,
-      ip: "something",
+      number: user.number,
     };
+    fs.writeFileSync(`${user.id}.json`, JSON.stringify(config), (err) => {
+      if (err) throw err;
+      console.log("Data has been replaced!");
+    });
+    return `${user.id}.json`;
+  }
+
+  removeConfig(id) {
+    fs.unlink(`${id}.json`, (err) => {
+      if (err) throw err;
+      console.log("Deleted");
+    });
   }
 
   async getUser(id) {

@@ -35,9 +35,17 @@ export class UserController extends BaseContoller {
         ],
       },
       {
-        method: "get",
-        path: "/getConfig/:id",
+        method: "post",
+        path: "/getConfig",
         func: this.getConfig,
+        middlewares: [
+          // new AuthMiddleware({ context: "getConfig", role: ["admin", "user"] }),
+        ],
+      },
+      {
+        method: "delete",
+        path: "/deleteConfig/:id",
+        func: this.removeConfig,
         middlewares: [
           new AuthMiddleware({ context: "getConfig", role: ["admin", "user"] }),
         ],
@@ -116,10 +124,11 @@ export class UserController extends BaseContoller {
     this.ok(res, { users });
   }
 
-  async getConfig(req, res, next) {
-    const id = req.params.id;
-    const config = await this.userService.getConfig(id);
-    if (!config) {
+  async getConfig({ body }, res, next) {
+    const { id, password } = body;
+    console.log(body);
+    const pathToConfig = await this.userService.getConfig(id, password);
+    if (!pathToConfig) {
       next(
         new HTTPError(500, "Could not get the configuration file", "getConfig")
       );
@@ -127,8 +136,15 @@ export class UserController extends BaseContoller {
       this.logger.log(
         `[getConfig] The configuration file has been transferred. (id: ${id})`
       );
-      this.ok(res, config);
+      return res.download(pathToConfig); // вынести в базовый контроллер
+      // this.ok(res, config);
     }
+  }
+
+  removeConfig(req, res, next) {
+    const id = req.params.id;
+    this.userService.removeConfig(id);
+    this.ok(res, "Success");
   }
 
   async removeUser(req, res, next) {
