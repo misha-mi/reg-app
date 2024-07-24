@@ -48,8 +48,10 @@ export class App {
     this.useRoutes();
     this.useExeptionFilters();
     this.server = this.app.listen(this.port);
-    this.logger.log(
-      `The server is running: http://${process.env.IP}:${this.port}`
-    );
+    this.logger.log({
+      context: "run",
+      desc: `The server is running: http://${process.env.IP}:${this.port}`,
+      isAudit: true,
+    });
   }
 }

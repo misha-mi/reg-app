@@ -8,14 +8,22 @@ import { PrismaClient } from "@prisma/client";
 import { SyncController } from "./sync/sync.controller.js";
 
 async function bootstrap() {
-  const logger = new LoggerService();
-
   const prismaClient = new PrismaClient();
+  const logger = new LoggerService(prismaClient, process.env.IP);
+
   try {
     await prismaClient.$connect();
-    logger.log("[Prisma] Successful connection to the database");
+    logger.log({
+      context: "database",
+      desc: "Successful connection to the database",
+      isAudit: true,
+    });
   } catch (e) {
-    logger.error(`[Prisma] Database connection error: ${e.message}`);
+    logger.error({
+      context: "database",
+      desc: `Database connection error: ${e.message}`,
+      isAudit: true,
+    });
   }
 
   const userRepository = new UserRepository(prismaClient);

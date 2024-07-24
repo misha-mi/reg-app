@@ -102,7 +102,11 @@ export class UserController extends BaseContoller {
         }
       }
     );
-    this.logger.log(`[register] User has been created. (name: ${result.name})`);
+    this.logger.log({
+      context: "create",
+      desc: `User has been created. (name: ${result.name})`,
+      isAudit: true,
+    });
     const [loginName, domain] = login.split("@");
     this.ok(res, { login: loginName, domain, name, id, number });
   }
@@ -111,7 +115,11 @@ export class UserController extends BaseContoller {
     const result = await this.userService.validateUser(req.body);
     if (result) {
       const jwt = await this.userService.setToken(result.id, result.role);
-      this.logger.log(`[login] The user has logged in. (name: ${result.name})`);
+      this.logger.log({
+        context: "login",
+        desc: `The user has logged in. (name: ${result.name})`,
+        isAudit: true,
+      });
       res.cookie("accessToken", jwt, { maxAge: 3600000, httpOnly: true });
       this.ok(res, result.role);
     } else {
@@ -132,9 +140,11 @@ export class UserController extends BaseContoller {
         new HTTPError(500, "Could not get the configuration file", "getConfig")
       );
     } else {
-      this.logger.log(
-        `[getConfig] The configuration file has been transferred. (id: ${id})`
-      );
+      this.logger.log({
+        context: "getConfig",
+        desc: `The configuration file has been transferred. (id: ${id})`,
+        isAudit: true,
+      });
       return res.download(pathToConfig); // вынести в базовый контроллер
       // this.ok(res, config);
     }
@@ -167,7 +177,11 @@ export class UserController extends BaseContoller {
         }
       }
     );
-    this.logger.log(`[removeUser] The user has been deleted (id: ${id})`);
+    this.logger.log({
+      context: "removeUser",
+      desc: `The user has been deleted (id: ${id})`,
+      isAudit: true,
+    });
     this.ok(res, user.id);
   }
 
@@ -180,9 +194,10 @@ export class UserController extends BaseContoller {
     if (!user) {
       next(new HTTPError(422, "There is no user with this ID", "removeUser"));
     } else {
-      this.logger.log(
-        `[getUser] The user's data has been received (id: ${userId})`
-      );
+      this.logger.log({
+        context: "getUser",
+        desc: `The user's data has been received (id: ${userId})`,
+      });
       const { login, name, id, role } = user;
       const [loginName, domain] = login.split("@");
       this.ok(res, { login: loginName, domain, name, id, role });
@@ -194,9 +209,11 @@ export class UserController extends BaseContoller {
     if (!status) {
       return next(new HTTPError(422, "Something broke down", "removeUsers"));
     }
-    this.logger.log(
-      `[removeUsers] The users has been deleted (IDs: ${body.join(", ")})`
-    );
+    this.logger.log({
+      context: "removeUsers",
+      desc: `The users has been deleted (IDs: ${body.join(", ")})`,
+      isAudit: true,
+    });
     this.ok(res, status);
   }
 }

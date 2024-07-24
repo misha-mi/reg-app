@@ -29,6 +29,12 @@ export class SyncController extends BaseContoller {
         func: this.syncAudit,
         middleware: [],
       },
+      {
+        method: "get",
+        path: "/getAudit/:ip",
+        func: this.getAudit,
+        middleware: [],
+      },
     ]);
   }
 
@@ -47,7 +53,12 @@ export class SyncController extends BaseContoller {
   }
 
   async syncAudit(req, res, next) {
-    console.log(req.params.ip);
-    this.ok(res, "Success");
+    console.log(`Success syncAudit ${req.params.ip}`);
+    this.ok(res, `Success syncAudit ${req.params.ip}`);
+  }
+
+  async getAudit(req, res, next) {
+    console.log(`Success getAudit ${req.params.ip}`);
+    this.ok(res, `Success getAudit ${req.params.ip}`);
   }
 }
