@@ -23,6 +23,12 @@ export class SyncController extends BaseContoller {
         func: this.removeUser,
         middleware: [],
       },
+      {
+        method: "get",
+        path: "/syncAudit/:ip",
+        func: this.syncAudit,
+        middleware: [],
+      },
     ]);
   }
 
@@ -31,14 +37,17 @@ export class SyncController extends BaseContoller {
   }
 
   async register(req, res, next) {
-    this.userController.register(req, res, next);
-  }
-
-  async register(req, res, next) {
+    req.locals.isSync = true;
     this.userController.register(req, res, next);
   }
 
   async removeUser(req, res, next) {
+    req.locals.isSync = true;
     this.userController.removeUser(req, res, next);
+  }
+
+  async syncAudit(req, res, next) {
+    console.log(req.params.ip);
+    this.ok(res, "Success");
   }
 }

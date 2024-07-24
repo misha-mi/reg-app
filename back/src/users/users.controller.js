@@ -126,7 +126,6 @@ export class UserController extends BaseContoller {
 
   async getConfig({ body }, res, next) {
     const { id, password } = body;
-    console.log(body);
     const pathToConfig = await this.userService.getConfig(id, password);
     if (!pathToConfig) {
       next(
@@ -148,6 +147,7 @@ export class UserController extends BaseContoller {
   }
 
   async removeUser(req, res, next) {
+    console.log(req.locals.isSync);
     const id = req.params.id;
     const user = await this.userService.removeUser(id);
     if (!user) {
