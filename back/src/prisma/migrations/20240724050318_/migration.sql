@@ -1,0 +1,7 @@
+-- CreateTable
+CREATE TABLE "Logger" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "context" TEXT NOT NULL,
+    "desc" TEXT NOT NULL,
+    "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

@@ -22,3 +22,12 @@ model User {
   token    String?
   number   String? @unique
 }
+
+model Logger {
+  id       String @id @default(uuid())
+  ip       String
+  type     String
+  context  String 
+  desc     String
+  time     DateTime @default(now())
+}
