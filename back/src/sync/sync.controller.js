@@ -42,14 +42,14 @@ export class SyncController extends BaseContoller {
     this.ok(res, { resp: "hi" });
   }
 
-  async register(req, res, next) {
-    req.locals.isSync = true;
-    this.userController.register(req, res, next);
+  async register({ body }, res, next) {
+    await this.userController.writeUserToBD(body);
+    this.ok(res, `${global.IP}: Create success (id:${body.id})`);
   }
 
-  async removeUser(req, res, next) {
-    req.locals.isSync = true;
-    this.userController.removeUser(req, res, next);
+  async removeUser({ body }, res, next) {
+    await this.userController.removeUserFromBD(body.id);
+    this.ok(res, `${global.IP}: Remove success (id:${body.id})`);
   }
 
   async syncAudit(req, res, next) {

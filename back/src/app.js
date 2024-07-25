@@ -31,13 +31,13 @@ export class App {
     this.app.use(
       cors({
         credentials: true,
-        origin: `http://${process.env.IP}:${process.env.CLIENT_PORT}`,
+        origin: `http://${global.IP}:${process.env.CLIENT_PORT}`,
       })
     );
     this.app.use(function (req, res, next) {
       res.setHeader(
         "Access-Control-Allow-Origin",
-        `http://${process.env.IP}:${process.env.CLIENT_PORT}`
+        `http://${global.IP}:${process.env.CLIENT_PORT}`
       );
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
       res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -50,7 +50,7 @@ export class App {
     this.server = this.app.listen(this.port);
     this.logger.log({
       context: "run",
-      desc: `The server is running: http://${process.env.IP}:${this.port}`,
+      desc: `The server is running: http://${global.IP}:${this.port}`,
       isAudit: true,
     });
   }

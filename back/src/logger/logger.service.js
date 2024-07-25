@@ -1,10 +1,9 @@
 import chalk from "chalk";
 
 export class LoggerService {
-  constructor(prismaClient, ip) {
+  constructor(prismaClient) {
     this.logger;
     this.prismaClient = prismaClient;
-    this.ip = ip;
     this.optionsTime = {
       year: "numeric",
       month: "numeric",
@@ -46,7 +45,7 @@ export class LoggerService {
     console.log(this._formatString("log", context, desc));
     if (isAudit) {
       await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: this.ip },
+        data: { type: "log", context, desc, ip: global.IP },
       });
     }
   }
@@ -55,7 +54,7 @@ export class LoggerService {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
       await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: this.ip },
+        data: { type: "log", context, desc, ip: global.IP },
       });
     }
   }
@@ -64,7 +63,7 @@ export class LoggerService {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
       await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: this.ip },
+        data: { type: "log", context, desc, ip: tglobal.IP },
       });
     }
   }

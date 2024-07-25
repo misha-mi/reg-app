@@ -83,28 +83,30 @@ export class UserController extends BaseContoller {
       return next(new HTTPError(422, result, "register"));
     }
     const { login, name, id, number } = result;
-    request.post(
-      {
-        url: `http://${process.env.OTHER_IP}:${process.env.OTHER_PORT}/sync/register`,
-        json: {
-          name,
-          login,
-          password: body.password,
-          number,
-          id,
+    global.OTHER_IPS.map((ip) => {
+      request.post(
+        {
+          url: `http://${ip}:${process.env.SERVER_PORT}/sync/register`,
+          json: {
+            name,
+            login,
+            password: body.password,
+            number,
+            id,
+          },
         },
-      },
-      (err) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("sync register success");
+        (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("sync register success");
+          }
         }
-      }
-    );
+      );
+    });
     this.logger.log({
       context: "create",
-      desc: `User has been created. (name: ${result.name})`,
+      desc: `User has been created. (ID: ${result.id})`,
       isAudit: true,
     });
     const [loginName, domain] = login.split("@");
@@ -117,7 +119,7 @@ export class UserController extends BaseContoller {
       const jwt = await this.userService.setToken(result.id, result.role);
       this.logger.log({
         context: "login",
-        desc: `The user has logged in. (name: ${result.name})`,
+        desc: `The user has logged in. (name: ${result.name}, role: ${result.role})`,
         isAudit: true,
       });
       res.cookie("accessToken", jwt, { maxAge: 3600000, httpOnly: true });
@@ -157,7 +159,6 @@ export class UserController extends BaseContoller {
   }
 
   async removeUser(req, res, next) {
-    console.log(req.locals.isSync);
     const id = req.params.id;
     const user = await this.userService.removeUser(id);
     if (!user) {
@@ -165,20 +166,22 @@ export class UserController extends BaseContoller {
         new HTTPError(422, "There is no user with this ID", "removeUser")
       );
     }
-    request.delete(
-      {
-        url: `http://${process.env.OTHER_IP}:${process.env.OTHER_PORT}/sync/delete/${id}`,
-      },
-      (err) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("sync register success");
+    global.OTHER_IPS.forEach((ip) => {
+      request.delete(
+        {
+          url: `http://${ip}:${process.env.SERVER_PORT}/sync/delete/${id}`,
+        },
+        (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("sync register success");
+          }
         }
-      }
-    );
+      );
+    });
     this.logger.log({
-      context: "removeUser",
+      context: "remove",
       desc: `The user has been deleted (id: ${id})`,
       isAudit: true,
     });
@@ -209,11 +212,21 @@ export class UserController extends BaseContoller {
     if (!status) {
       return next(new HTTPError(422, "Something broke down", "removeUsers"));
     }
-    this.logger.log({
-      context: "removeUsers",
-      desc: `The users has been deleted (IDs: ${body.join(", ")})`,
-      isAudit: true,
+    body.forEach((id) => {
+      this.logger.log({
+        context: "remove",
+        desc: `The users has been deleted (ID: ${id})`,
+        isAudit: true,
+      });
     });
     this.ok(res, status);
+  }
+
+  async removeUserFromBD(id) {
+    return await this.userService.removeUserFromBD(id);
+  }
+
+  async writeUserToBD(newUser) {
+    return await this.userService.create(newUser);
   }
 }
