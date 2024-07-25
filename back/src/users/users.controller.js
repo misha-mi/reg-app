@@ -82,7 +82,8 @@ export class UserController extends BaseContoller {
     if (typeof result === "string" || Array.isArray(result)) {
       return next(new HTTPError(422, result, "register"));
     }
-    const { login, name, id, number } = result;
+    const { login, name, id, number, password, role } = result;
+    console.log(result);
     global.OTHER_IPS.map((ip) => {
       request.post(
         {
@@ -90,9 +91,10 @@ export class UserController extends BaseContoller {
           json: {
             name,
             login,
-            password: body.password,
+            password,
             number,
             id,
+            role,
           },
         },
         (err) => {
@@ -175,7 +177,7 @@ export class UserController extends BaseContoller {
           if (err) {
             console.log(err);
           } else {
-            console.log("sync register success");
+            console.log("sync remove success");
           }
         }
       );

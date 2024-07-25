@@ -47,9 +47,10 @@ export class SyncController extends BaseContoller {
     this.ok(res, `${global.IP}: Create success (id:${body.id})`);
   }
 
-  async removeUser({ body }, res, next) {
-    await this.userController.removeUserFromBD(body.id);
-    this.ok(res, `${global.IP}: Remove success (id:${body.id})`);
+  async removeUser(req, res, next) {
+    const id = req.params.id;
+    await this.userController.removeUserFromBD(id);
+    this.ok(res, `${global.IP}: Remove success (id:${id})`);
   }
 
   async syncAudit(req, res, next) {

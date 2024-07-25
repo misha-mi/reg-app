@@ -9,7 +9,6 @@ export class UserRepository {
     if (!id) {
       id = uuidv4();
     }
-    console.log(id);
     return this.prismaClient.user.create({
       data: { login, name, password, role, number, id },
     });
