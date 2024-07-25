@@ -227,6 +227,6 @@ export class UserController extends BaseContoller {
   }
 
   async writeUserToBD(newUser) {
-    return await this.userService.create(newUser);
+    return await this.userService.writeUserToBD(newUser);
   }
 }
