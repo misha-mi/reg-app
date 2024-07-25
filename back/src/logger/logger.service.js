@@ -41,29 +41,29 @@ export class LoggerService {
     }
   }
 
-  async log({ context, desc, isAudit }) {
+  async log({ context, desc, isAudit, ip }) {
     console.log(this._formatString("log", context, desc));
     if (isAudit) {
       await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: global.IP },
+        data: { type: "log", context, desc, ip: ip || global.IP },
       });
     }
   }
 
-  async error({ context, desc, isAudit }) {
+  async error({ context, desc, isAudit, ip }) {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
       await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: global.IP },
+        data: { type: "log", context, desc, ip: ip || global.IP },
       });
     }
   }
 
-  async warn({ context, desc, isAudit }) {
+  async warn({ context, desc, isAudit, ip }) {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
       await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: tglobal.IP },
+        data: { type: "log", context, desc, ip: ip || tglobal.IP },
       });
     }
   }

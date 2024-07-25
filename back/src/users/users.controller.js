@@ -220,6 +220,20 @@ export class UserController extends BaseContoller {
         desc: `The users has been deleted (ID: ${id})`,
         isAudit: true,
       });
+      global.OTHER_IPS.forEach((ip) => {
+        request.delete(
+          {
+            url: `http://${ip}:${process.env.SERVER_PORT}/sync/delete/${id}`,
+          },
+          (err) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("sync remove success");
+            }
+          }
+        );
+      });
     });
     this.ok(res, status);
   }
