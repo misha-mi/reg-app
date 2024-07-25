@@ -184,7 +184,7 @@ export class UserController extends BaseContoller {
     });
     this.logger.log({
       context: "remove",
-      desc: `The user has been deleted (id: ${id})`,
+      desc: `The user has been deleted (ID: ${id})`,
       isAudit: true,
     });
     this.ok(res, user.id);
