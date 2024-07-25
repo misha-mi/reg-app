@@ -42,16 +42,16 @@ export class SyncController extends BaseContoller {
     this.ok(res, { resp: "hi" });
   }
 
-  async register({ body }, res, next) {
+  async register(req, res, next) {
     const ip = req.ip.split(":").pop();
-    await this.userController.writeUserToBD(body);
+    await this.userController.writeUserToBD(req.body);
     this.logger.log({
       context: "create",
-      desc: `User has been created (sync) (ID: ${body.id})`,
+      desc: `User has been created (sync) (ID: ${req.body.id})`,
       isAudit: true,
       ip,
     });
-    this.ok(res, `${global.IP}: Create success (id:${body.id})`);
+    this.ok(res, `${global.IP}: Create success (id:${req.body.id})`);
   }
 
   async removeUser(req, res, next) {
