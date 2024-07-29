@@ -8,4 +8,19 @@ export class LoggerRepository {
       data: { type, context, desc, ip },
     });
   }
+
+  async getRCEvents() {
+    return this.prismaClient.logger.findMany({
+      where: {
+        OR: [
+          {
+            context: "remove",
+          },
+          {
+            context: "create",
+          },
+        ],
+      },
+    });
+  }
 }

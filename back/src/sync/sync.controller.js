@@ -35,6 +35,12 @@ export class SyncController extends BaseContoller {
         func: this.getAudit,
         middleware: [],
       },
+      {
+        method: "get",
+        path: "/getRCOobject",
+        func: this.getRCObject,
+        middleware: [],
+      },
     ]);
   }
 
@@ -68,8 +74,32 @@ export class SyncController extends BaseContoller {
   }
 
   async syncAudit(req, res, next) {
-    console.log(`Success syncAudit ${req.params.ip}`);
+    // Тут необходимо поднимать сервисы
+    const oldIP = req.params.ip;
+    const RCObject = await request.get(
+      {
+        url: `http://${oldIP}:${process.env.SERVER_PORT}/sync/getRCOobject`,
+      },
+      (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("sync register success");
+        }
+      }
+    );
+    console.log(`Success syncAudit ${req.params.ip}`, RCObject);
     this.ok(res, `Success syncAudit ${req.params.ip}`);
+  }
+
+  async getRCObject(req, res, next) {
+    const eventsDB = await this.logger.getRCEvents();
+    const RCObject = {};
+    eventsDB.forEach(({ desc, context }) => {
+      const userId = desc.match(/\: ([^}]+)\)/)[1];
+      RCObject[userId] = context;
+    });
+    this.ok(res, RCObject);
   }
 
   async getAudit(req, res, next) {

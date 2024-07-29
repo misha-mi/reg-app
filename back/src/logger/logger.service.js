@@ -76,4 +76,8 @@ export class LoggerService {
       });
     }
   }
+
+  async getRCEvents() {
+    return await this.loggerRepository.getRCEvents();
+  }
 }
