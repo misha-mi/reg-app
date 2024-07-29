@@ -1,4 +1,5 @@
 import { BaseContoller } from "../common/base.controller.js";
+import request from "request";
 
 export class SyncController extends BaseContoller {
   constructor(logger, userController) {
