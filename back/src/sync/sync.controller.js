@@ -115,6 +115,7 @@ export class SyncController extends BaseContoller {
         delete localRCObject[id];
       }
     }
+    const localDifferences = { ...compareRCObj, ...RCObject };
     console.log({ ...compareRCObj, ...RCObject, ...localRCObject });
   }
 
