@@ -112,9 +112,10 @@ export class SyncController extends BaseContoller {
         compareRCObj[id] = RCObject[id];
       } else {
         delete RCObject[id];
+        delete localRCObject[id];
       }
     }
-    console.log({ ...compareRCObj, ...RCObject });
+    console.log({ ...compareRCObj, ...RCObject, ...localRCObject });
   }
 
   async getRCObject(req, res, next) {
