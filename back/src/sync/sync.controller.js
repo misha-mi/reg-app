@@ -81,16 +81,16 @@ export class SyncController extends BaseContoller {
       {
         url: `http://${oldIP}:${process.env.SERVER_PORT}/sync/getRCOobject`,
       },
-      (err) => {
+      (err, resp, body) => {
         if (err) {
           console.log(err);
         } else {
-          console.log("sync register success");
+          const data = JSON.parse(body);
+          console.log(data);
+          this.ok(res, data);
         }
       }
     );
-    console.log(`Success syncAudit ${req.params.ip}`, RCObject);
-    this.ok(res, `Success syncAudit ${req.params.ip}`);
   }
 
   async getRCObject(req, res, next) {
