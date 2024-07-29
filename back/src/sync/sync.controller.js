@@ -49,6 +49,16 @@ export class SyncController extends BaseContoller {
     this.ok(res, { resp: "hi" });
   }
 
+  async generateRCObject() {
+    const eventsDB = await this.logger.getRCEvents();
+    const RCObject = {};
+    eventsDB.forEach(({ desc, context }) => {
+      const userId = desc.match(/\: ([^}]+)\)/)[1];
+      RCObject[userId] = context;
+    });
+    return RCObject;
+  }
+
   async register(req, res, next) {
     const ip = req.ip.split(":").pop();
     await this.userController.writeUserToBD(req.body);
@@ -93,13 +103,13 @@ export class SyncController extends BaseContoller {
     );
   }
 
+  async comparisonRCObject(RCObject) {
+    const localRCObject = await this.generateRCObject();
+    console.log(RCObject, localRCObject);
+  }
+
   async getRCObject(req, res, next) {
-    const eventsDB = await this.logger.getRCEvents();
-    const RCObject = {};
-    eventsDB.forEach(({ desc, context }) => {
-      const userId = desc.match(/\: ([^}]+)\)/)[1];
-      RCObject[userId] = context;
-    });
+    const RCObject = await this.generateRCObject();
     this.ok(res, RCObject);
   }
 
