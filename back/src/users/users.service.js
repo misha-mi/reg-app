@@ -81,7 +81,8 @@ faxdetect=no
           console.log(data); // выводим считанные данные
         }
       )
-      .split("\n\n");
+      .split("\n\n")
+      .filter((item) => item.length);
     const configString = sipUsers.reduce((string, sipUser) => {
       if (sipUser.includes(`[${phoneNumber}]`)) {
         return string;
@@ -133,7 +134,7 @@ MYSQL_SCRIPT`;
     } else if (isExistNumber) {
       return "A user with this SIP number already exists";
     }
-    const newUser = new User({ login, name, number, id });
+    const newUser = new User({ login, name, number, id, isReg: true });
 
     await newUser.setPassword(password);
     await this.doCommandLine(
@@ -147,7 +148,6 @@ MYSQL_SCRIPT`;
       "mail-bs"
     );
     this.createSIPUser(number, password);
-
     return this.userRepository.create(newUser);
   }
 

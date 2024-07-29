@@ -1,9 +1,9 @@
 import chalk from "chalk";
 
 export class LoggerService {
-  constructor(prismaClient) {
+  constructor(loggerRepository) {
     this.logger;
-    this.prismaClient = prismaClient;
+    this.loggerRepository = loggerRepository;
     this.optionsTime = {
       year: "numeric",
       month: "numeric",
@@ -44,8 +44,11 @@ export class LoggerService {
   async log({ context, desc, isAudit, ip }) {
     console.log(this._formatString("log", context, desc));
     if (isAudit) {
-      await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: ip || global.IP },
+      await this.loggerRepository.create({
+        type: "log",
+        context,
+        desc,
+        ip: ip || global.IP,
       });
     }
   }
@@ -53,8 +56,11 @@ export class LoggerService {
   async error({ context, desc, isAudit, ip }) {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
-      await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: ip || global.IP },
+      await this.loggerRepository.create({
+        type: "error",
+        context,
+        desc,
+        ip: ip || global.IP,
       });
     }
   }
@@ -62,8 +68,11 @@ export class LoggerService {
   async warn({ context, desc, isAudit, ip }) {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
-      await this.prismaClient.logger.create({
-        data: { type: "log", context, desc, ip: ip || tglobal.IP },
+      await this.loggerRepository.create({
+        type: "warn",
+        context,
+        desc,
+        ip: ip || global.IP,
       });
     }
   }

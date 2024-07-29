@@ -8,6 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import { SyncController } from "./sync/sync.controller.js";
 import os from "os";
 import fs from "fs";
+import { LoggerRepository } from "./logger/logger.repository.js";
 
 // const localIP = Object.values(os.networkInterfaces())
 //   .flat()
@@ -43,7 +44,26 @@ function getIPs() {
 
 async function bootstrap() {
   const prismaClient = new PrismaClient();
-  const logger = new LoggerService(prismaClient);
+
+  const loggerRepository = new LoggerRepository(prismaClient);
+  const logger = new LoggerService(loggerRepository);
+
+  const userRepository = new UserRepository(prismaClient);
+  const userService = new UserService(userRepository);
+  const userContoller = new UserController(logger, userService);
+
+  console.log(
+    await prismaClient.user.findMany({
+      where: {
+        NOT: [
+          { id: "14286e95-34c3-4252-948d-5b17fcb4a13c" },
+          { id: "018170ab-552b-47dd-92ad-8d3a5cfad017" },
+          { id: "14286e95-34c3-4252-948d-5b17fcb4a13c" },
+          { id: "1fc935aa-c38f-4d6c-b72d-2f175a8bafea" },
+        ],
+      },
+    })
+  );
 
   try {
     await prismaClient.$connect();
@@ -59,10 +79,6 @@ async function bootstrap() {
       isAudit: true,
     });
   }
-
-  const userRepository = new UserRepository(prismaClient);
-  const userService = new UserService(userRepository);
-  const userContoller = new UserController(logger, userService);
 
   const app = new App(
     logger,

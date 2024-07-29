@@ -5,12 +5,12 @@ export class UserRepository {
     this.prismaClient = prismaClient;
   }
 
-  async create({ login, name, password, role, number, id }) {
+  async create({ login, name, password, role, number, id, isReg }) {
     if (!id) {
       id = uuidv4();
     }
     return this.prismaClient.user.create({
-      data: { login, name, password, role, number, id },
+      data: { login, name, password, role, number, id, isReg },
     });
   }
 
