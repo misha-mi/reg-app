@@ -96,7 +96,7 @@ export class SyncController extends BaseContoller {
           console.log(err);
         } else {
           const data = JSON.parse(body);
-          console.log(data);
+          this.comparisonRCObject(data);
           this.ok(res, data);
         }
       }
@@ -105,7 +105,16 @@ export class SyncController extends BaseContoller {
 
   async comparisonRCObject(RCObject) {
     const localRCObject = await this.generateRCObject();
+    const compareRCObj = {};
     console.log(RCObject, localRCObject);
+    for (var id in RCObject) {
+      if (localRCObject[id] !== RCObject[id] || !localRCObject[id]) {
+        compareRCObj[id] = RCObject[id];
+      } else {
+        delete RCObject[id];
+      }
+    }
+    console.log({ ...compareRCObj, ...RCObject });
   }
 
   async getRCObject(req, res, next) {
