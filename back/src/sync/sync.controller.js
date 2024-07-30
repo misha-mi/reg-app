@@ -58,6 +58,12 @@ export class SyncController extends BaseContoller {
   async register(req, res, next) {
     const ip = req.ip.split(":").pop();
     await this.syncService.writeUserToBD(req.body);
+    this.logger.log({
+      context: "create",
+      desc: `User has been created (sync) (ID: ${req.body.id})`,
+      isAudit: true,
+      ip,
+    });
     this.ok(res, `${global.IP}: Create success (id:${req.body.id})`);
   }
 
@@ -65,6 +71,12 @@ export class SyncController extends BaseContoller {
     const ip = req.ip.split(":").pop();
     const id = req.params.id;
     await this.syncService.removeUserFromBD(id);
+    this.logger.log({
+      context: "remove",
+      desc: `The user has been deleted (sync) (ID: ${id})`,
+      isAudit: true,
+      ip,
+    });
     this.ok(res, `${global.IP}: Remove success (id:${id})`);
   }
 
