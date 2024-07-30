@@ -102,7 +102,10 @@ export class SyncController extends BaseContoller {
     request.post(
       {
         url: `http://${ip}:${process.env.SERVER_PORT}/sync/syncUpdate`,
-        json: compareObj,
+        json: {
+          compareObj,
+          remoteIp: global.IP,
+        },
       },
       async (err, resp, body) => {
         if (err) {
@@ -143,7 +146,10 @@ export class SyncController extends BaseContoller {
   }
 
   async syncUpdate({ body }, res, next) {
-    const convertedRemoteCompare = await this.syncService.syncUpdate(body);
+    const convertedRemoteCompare = await this.syncService.syncUpdate(
+      body.compareObj,
+      body.remoteIp
+    );
     await this.logUpdate(body.localCompare);
     this.ok(res, convertedRemoteCompare);
   }
