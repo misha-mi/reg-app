@@ -42,7 +42,7 @@ async function bootstrap() {
   const userService = new UserService(userRepository);
   const userContoller = new UserController(logger, userService);
 
-  const syncService = new SyncService(userRepository);
+  const syncService = new SyncService(logger, userRepository);
   const syncController = new SyncController(logger, syncService);
 
   try {

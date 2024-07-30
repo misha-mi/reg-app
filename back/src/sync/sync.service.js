@@ -1,5 +1,6 @@
 export class SyncService {
-  constructor(userRepository) {
+  constructor(logger, userRepository) {
+    this.logger = logger;
     this.userRepository = userRepository;
   }
 
@@ -77,13 +78,13 @@ export class SyncService {
     for (let id in dataForUpdate) {
       if (dataForUpdate[id] === "remove") {
         try {
-          this.userRepository.remove(id);
+          this.removeUserFromBD(id);
         } catch {
           return null;
         }
       } else {
         try {
-          this.userRepository.create(dataForUpdate[id]);
+          this.writeUserToBD(dataForUpdate[id]);
         } catch {
           return null;
         }
@@ -94,6 +95,12 @@ export class SyncService {
 
   async removeUserFromBD(id) {
     try {
+      this.logger.log({
+        context: "remove",
+        desc: `The user has been deleted (sync) (ID: ${id})`,
+        isAudit: true,
+        ip,
+      });
       return await this.userRepository.remove(id);
     } catch {
       return null;
@@ -102,7 +109,14 @@ export class SyncService {
 
   async writeUserToBD(newUser) {
     try {
-      return await this.userRepository.create(newUser);
+      const user = await this.userRepository.create(newUser);
+      this.logger.log({
+        context: "create",
+        desc: `User has been created (sync) (ID: ${newUser.id})`,
+        isAudit: true,
+        ip,
+      });
+      return await this.userRepository.create(user);
     } catch {
       return null;
     }
