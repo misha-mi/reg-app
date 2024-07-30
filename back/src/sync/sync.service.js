@@ -77,6 +77,7 @@ export class SyncService {
     for (let id in dataForUpdate) {
       if (dataForUpdate[id] === "remove") {
         try {
+          await this.userRepository.getUser(id);
           this.userRepository.remove(id);
         } catch {
           return null;
@@ -94,6 +95,7 @@ export class SyncService {
 
   async removeUserFromBD(id) {
     try {
+      await this.userRepository.getUser(id);
       return await this.userRepository.remove(id);
     } catch {
       return null;
