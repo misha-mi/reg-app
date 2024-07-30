@@ -87,14 +87,12 @@ export class SyncController extends BaseContoller {
           context: "remove",
           desc: `The user has been deleted (sync) (ID: ${id})`,
           isAudit: true,
-          ip,
         });
-      } else if (objectRC[id] === "remove") {
+      } else {
         this.logger.log({
           context: "create",
           desc: `User has been created (sync) (ID: ${id})`,
           isAudit: true,
-          ip,
         });
       }
     }
