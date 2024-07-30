@@ -108,7 +108,7 @@ export class SyncController extends BaseContoller {
         if (err) {
           console.log(err);
         } else {
-          await this.syncService.syncUpdate(body);
+          await this.syncService.syncUpdate(body, ip);
           this.logUpdate(body);
         }
       }

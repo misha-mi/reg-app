@@ -1,3 +1,6 @@
+import createRemoteUser from "../common/create-remote-user.js";
+import removeRemoteUser from "../common/remove-remote-user.js";
+
 export class SyncService {
   constructor(userRepository) {
     this.userRepository = userRepository;
@@ -64,7 +67,8 @@ export class SyncService {
     return [convertedRemoteCompare, localCompare];
   }
 
-  async syncUpdate(body) {
+  async syncUpdate(body, ignoreIP) {
+    console.log(global.IP, ignoreIP);
     let convertedRemoteCompare = body;
     let dataForUpdate = body;
     if (body.remoteCompare) {
@@ -79,6 +83,7 @@ export class SyncService {
         try {
           const user = await this.userRepository.getUser(id);
           if (user) {
+            removeRemoteUser(id);
             this.userRepository.remove(id);
           }
         } catch {
@@ -86,6 +91,7 @@ export class SyncService {
         }
       } else {
         try {
+          createRemoteUser(dataForUpdate[id]);
           this.userRepository.create(dataForUpdate[id]);
         } catch {
           return null;

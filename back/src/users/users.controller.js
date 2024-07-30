@@ -1,4 +1,3 @@
-import request from "request";
 import { AuthMiddleware } from "../common/auth.middleware.js";
 import { BaseContoller } from "../common/base.controller.js";
 import { ValidateMiddleware } from "../common/validate.middleware.js";
@@ -155,20 +154,6 @@ export class UserController extends BaseContoller {
         new HTTPError(422, "There is no user with this ID", "removeUser")
       );
     }
-    // global.OTHER_IPS.forEach((ip) => {
-    //   request.delete(
-    //     {
-    //       url: `http://${ip}:${process.env.SERVER_PORT}/sync/delete/${id}`,
-    //     },
-    //     (err) => {
-    //       if (err) {
-    //         console.log(err);
-    //       } else {
-    //         console.log("sync remove success");
-    //       }
-    //     }
-    //   );
-    // });
     removeRemoteUser(id);
     this.logger.log({
       context: "remove",
