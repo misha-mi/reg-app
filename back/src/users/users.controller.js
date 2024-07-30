@@ -5,6 +5,8 @@ import { ValidateMiddleware } from "../common/validate.middleware.js";
 import { HTTPError } from "../errors/http-error.class.js";
 import { UserLoginDto } from "./dto/user-login.dto.js";
 import { UserRegisterDto } from "./dto/user-register.dto.js";
+import removeRemoteUser from "../common/remove-remote-user.js";
+import createRemoteUser from "../common/create-remote-user.js";
 
 export class UserController extends BaseContoller {
   constructor(logger, userService) {
@@ -83,27 +85,13 @@ export class UserController extends BaseContoller {
       return next(new HTTPError(422, result, "register"));
     }
     const { login, name, id, number, password, role } = result;
-    global.OTHER_IPS.map((ip) => {
-      request.post(
-        {
-          url: `http://${ip}:${process.env.SERVER_PORT}/sync/register`,
-          json: {
-            name,
-            login,
-            password,
-            number,
-            id,
-            role,
-          },
-        },
-        (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("sync register success");
-          }
-        }
-      );
+    createRemoteUser({
+      name,
+      login,
+      password,
+      number,
+      id,
+      role,
     });
     this.logger.log({
       context: "create",
@@ -167,20 +155,21 @@ export class UserController extends BaseContoller {
         new HTTPError(422, "There is no user with this ID", "removeUser")
       );
     }
-    global.OTHER_IPS.forEach((ip) => {
-      request.delete(
-        {
-          url: `http://${ip}:${process.env.SERVER_PORT}/sync/delete/${id}`,
-        },
-        (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("sync remove success");
-          }
-        }
-      );
-    });
+    // global.OTHER_IPS.forEach((ip) => {
+    //   request.delete(
+    //     {
+    //       url: `http://${ip}:${process.env.SERVER_PORT}/sync/delete/${id}`,
+    //     },
+    //     (err) => {
+    //       if (err) {
+    //         console.log(err);
+    //       } else {
+    //         console.log("sync remove success");
+    //       }
+    //     }
+    //   );
+    // });
+    removeRemoteUser(id);
     this.logger.log({
       context: "remove",
       desc: `The user has been deleted (ID: ${id})`,
@@ -219,20 +208,7 @@ export class UserController extends BaseContoller {
         desc: `The users has been deleted (ID: ${id})`,
         isAudit: true,
       });
-      global.OTHER_IPS.forEach((ip) => {
-        request.delete(
-          {
-            url: `http://${ip}:${process.env.SERVER_PORT}/sync/delete/${id}`,
-          },
-          (err) => {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("sync remove success");
-            }
-          }
-        );
-      });
+      removeRemoteUser(id);
     });
     this.ok(res, status);
   }
