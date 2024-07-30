@@ -142,7 +142,7 @@ export class SyncController extends BaseContoller {
             localCompare: remoteCompare,
           };
           this.sendUpdateData(sendData, oldIP);
-          this.ok(res, sendData);
+          this.ok(res, "success"); // Тут
         }
       }
     );
@@ -164,7 +164,21 @@ export class SyncController extends BaseContoller {
   }
 
   async getAudit(req, res, next) {
+    const activeIP = req.params.ip;
     console.log(`Success getAudit ${req.params.ip}`);
+    request.get(
+      {
+        url: `http://${activeIP}:${process.env.SERVER_PORT}/sync/getRCOobject`,
+      },
+      async (err, resp, body) => {
+        if (err) {
+          console.log(err);
+        } else {
+          const data = JSON.parse(body);
+          this.ok(res, sendData);
+        }
+      }
+    );
     this.ok(res, `Success getAudit ${req.params.ip}`);
   }
 }
