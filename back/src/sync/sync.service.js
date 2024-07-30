@@ -65,16 +65,14 @@ export class SyncService {
   }
 
   async syncUpdate(body) {
-    let convertedRemoteCompare = "success";
+    let convertedCompare;
     if (body.remoteCompare) {
-      convertedRemoteCompare = await this.convertRemoteCompare(
-        body.remoteCompare
-      );
-      console.log(body);
+      convertedCompare = await this.convertRemoteCompare(body.remoteCompare);
+      console.log(convertedCompare);
     } else {
-      console.log(body);
+      console.log(convertedCompare);
     }
-    return convertedRemoteCompare;
+    return convertedCompare;
   }
 
   async removeUserFromBD(id) {
