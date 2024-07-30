@@ -65,7 +65,7 @@ export class SyncService {
   }
 
   async syncUpdate(body) {
-    let convertedCompare;
+    let convertedCompare = body;
     if (body.remoteCompare) {
       convertedCompare = await this.convertRemoteCompare(body.remoteCompare);
       console.log(convertedCompare);
