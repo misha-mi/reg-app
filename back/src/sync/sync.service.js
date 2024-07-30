@@ -66,12 +66,14 @@ export class SyncService {
 
   async syncUpdate(body) {
     let convertedRemoteCompare = body;
+    let dataForUpdate = body;
     if (body.remoteCompare) {
+      dataForUpdate = body.localCompare;
       convertedRemoteCompare = await this.convertRemoteCompare(
         body.remoteCompare
       );
     }
-    console.log(body);
+    console.log(dataForUpdate);
     return convertedRemoteCompare;
   }
 
