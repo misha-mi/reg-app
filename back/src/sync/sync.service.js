@@ -3,6 +3,19 @@ export class SyncService {
     this.userRepository = userRepository;
   }
 
+  async convertRemoteCompare(remoteCompare) {
+    const convertedRemoteCompare = {};
+    for (let id in remoteCompare) {
+      if (remoteCompare[id] === "create") {
+        convertedRemoteCompare[id] = await this.userRepository.getUser(id);
+        convertedRemoteCompare[id].isReg = false;
+      } else {
+        convertedRemoteCompare[id] = remoteCompare[id];
+      }
+    }
+    return convertedRemoteCompare;
+  }
+
   async generateRCObject(eventsDB) {
     const RCObject = {};
     eventsDB.forEach(({ desc, context }) => {
@@ -44,7 +57,12 @@ export class SyncService {
         delete localRCObject[id];
       }
     }
-    return [{ ...remoteCompare, ...localRCObject }, localCompare];
+    const convertedRemoteCompare = await this.convertRemoteCompare({
+      ...remoteCompare,
+      ...localRCObject,
+    });
+    console.log(convertedRemoteCompare);
+    return [convertedRemoteCompare, localCompare];
   }
 
   async removeUserFromBD(id) {

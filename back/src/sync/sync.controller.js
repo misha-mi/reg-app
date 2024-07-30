@@ -89,11 +89,12 @@ export class SyncController extends BaseContoller {
           const eventsDB = await this.logger.getRCEvents();
           const [remoteCompare, localCompare] =
             await this.syncService.comparisonRCObject(data, eventsDB);
-          const convertedRemoteCompare = null;
-          this.ok(res, {
+
+          const sendData = {
             remoteCompare: localCompare,
-            localCompare: convertedRemoteCompare,
-          });
+            localCompare: remoteCompare,
+          };
+          this.ok(res, "success");
         }
       }
     );
