@@ -76,9 +76,17 @@ export class SyncService {
     console.log(dataForUpdate);
     for (let id in dataForUpdate) {
       if (dataForUpdate[id] === "remove") {
-        this.userRepository.remove(id);
+        try {
+          this.userRepository.remove(id);
+        } catch {
+          return null;
+        }
       } else {
-        this.userRepository.create(dataForUpdate[id]);
+        try {
+          this.userRepository.create(dataForUpdate[id]);
+        } catch {
+          return null;
+        }
       }
     }
     return convertedRemoteCompare;
