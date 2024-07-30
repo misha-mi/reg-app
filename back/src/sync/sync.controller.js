@@ -121,6 +121,9 @@ export class SyncController extends BaseContoller {
   async syncAudit(req, res, next) {
     // Тут необходимо поднимать сервисы
     const oldIP = req.params.ip;
+    if (oldIP === global.IP) {
+      return this.ok(res, "It's my ip");
+    }
     request.get(
       {
         url: `http://${oldIP}:${process.env.SERVER_PORT}/sync/getRCOobject`,
