@@ -80,6 +80,26 @@ export class SyncController extends BaseContoller {
     this.ok(res, `${global.IP}: Remove success (id:${id})`);
   }
 
+  async logUpdate(objectRC) {
+    for (let id in objectRC) {
+      if (objectRC[id] === "remove") {
+        this.logger.log({
+          context: "remove",
+          desc: `The user has been deleted (sync) (ID: ${id})`,
+          isAudit: true,
+          ip,
+        });
+      } else if (objectRC[id] === "remove") {
+        this.logger.log({
+          context: "create",
+          desc: `User has been created (sync) (ID: ${id})`,
+          isAudit: true,
+          ip,
+        });
+      }
+    }
+  }
+
   sendUpdateData(compareObj, ip) {
     request.post(
       {
@@ -90,7 +110,8 @@ export class SyncController extends BaseContoller {
         if (err) {
           console.log(err);
         } else {
-          this.syncService.syncUpdate(body);
+          await this.syncService.syncUpdate(body);
+          this.logUpdate(body);
         }
       }
     );
@@ -125,6 +146,7 @@ export class SyncController extends BaseContoller {
 
   async syncUpdate({ body }, res, next) {
     const convertedRemoteCompare = await this.syncService.syncUpdate(body);
+    await this.logUpdate(body.localCompare);
     this.ok(res, convertedRemoteCompare);
   }
 

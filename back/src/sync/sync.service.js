@@ -73,7 +73,7 @@ export class SyncService {
         body.remoteCompare
       );
     }
-    console.log(dataForUpdate);
+
     for (let id in dataForUpdate) {
       if (dataForUpdate[id] === "remove") {
         try {
