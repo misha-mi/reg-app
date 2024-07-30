@@ -68,7 +68,6 @@ export class SyncService {
   }
 
   async syncUpdate(body, remoteIP) {
-    let isActive = global.OTHER_IPS.includes(remoteIP);
     let convertedRemoteCompare = body;
     let dataForUpdate = body;
     if (body.remoteCompare) {
@@ -83,7 +82,7 @@ export class SyncService {
         try {
           const user = await this.userRepository.getUser(id);
           if (user) {
-            isActive ? removeRemoteUser(id, remoteIP) : null;
+            removeRemoteUser(id, remoteIP);
             this.userRepository.remove(id);
           }
         } catch {
@@ -91,7 +90,7 @@ export class SyncService {
         }
       } else {
         try {
-          isActive ? createRemoteUser(dataForUpdate[id], remoteIP) : null;
+          createRemoteUser(dataForUpdate[id], remoteIP);
           this.userRepository.create(dataForUpdate[id]);
         } catch {
           return null;
