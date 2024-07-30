@@ -124,11 +124,12 @@ export class SyncController extends BaseContoller {
     );
   }
 
-  async syncUpdate({ data }, res, next) {
-    if (data.remoteCompare) {
+  async syncUpdate({ body }, res, next) {
+    if (body.remoteCompare) {
       const convertedRemoteCompare = this.syncService.convertRemoteCompare(
-        data.remoteCompare
+        body.remoteCompare
       );
+      console.log(body);
       this.ok(res, convertedRemoteCompare);
       // request.get(
       //   {

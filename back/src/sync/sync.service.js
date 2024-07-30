@@ -61,7 +61,6 @@ export class SyncService {
       ...remoteCompare,
       ...localRCObject,
     });
-    console.log(convertedRemoteCompare);
     return [convertedRemoteCompare, localCompare];
   }
 
