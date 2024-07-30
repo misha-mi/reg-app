@@ -42,6 +42,12 @@ export class SyncController extends BaseContoller {
         func: this.getRCObject,
         middleware: [],
       },
+      {
+        method: "post",
+        path: "/syncUpdate",
+        func: this.syncUpdate,
+        middleware: [],
+      },
     ]);
   }
 
@@ -74,6 +80,23 @@ export class SyncController extends BaseContoller {
     this.ok(res, `${global.IP}: Remove success (id:${id})`);
   }
 
+  sendUpdateData(compareObj, ip) {
+    request.post(
+      {
+        url: `http://${ip}:${process.env.SERVER_PORT}/sync/syncUpdate`,
+        json: compareObj,
+      },
+      async (err, resp, body) => {
+        if (err) {
+          console.log(err);
+        } else {
+          const data = JSON.parse(body);
+          console.log(data);
+        }
+      }
+    );
+  }
+
   async syncAudit(req, res, next) {
     // Тут необходимо поднимать сервисы
     const oldIP = req.params.ip;
@@ -94,13 +117,42 @@ export class SyncController extends BaseContoller {
             remoteCompare: localCompare,
             localCompare: remoteCompare,
           };
+          sendUpdateData(sendData, oldIP);
           this.ok(res, sendData);
         }
       }
     );
   }
 
-  async updateUsers(compareRC) {}
+  async syncUpdate({ data }, res, next) {
+    if (data.remoteCompare) {
+      const convertedRemoteCompare = this.syncService.convertRemoteCompare(
+        data.remoteCompare
+      );
+      this.ok(res, convertedRemoteCompare);
+      // request.get(
+      //   {
+      //     url: `http://${oldIP}:${process.env.SERVER_PORT}/sync/getRCOobject`,
+      //   },
+      //   async (err, resp, body) => {
+      //     if (err) {
+      //       console.log(err);
+      //     } else {
+      //       const data = JSON.parse(body);
+      //       const eventsDB = await this.logger.getRCEvents();
+      //       const [remoteCompare, localCompare] =
+      //         await this.syncService.comparisonRCObject(data, eventsDB);
+
+      //       const sendData = {
+      //         remoteCompare: localCompare,
+      //         localCompare: remoteCompare,
+      //       };
+      //       this.ok(res, sendData);
+      //     }
+      //   }
+      // );
+    }
+  }
 
   async getRCObject(req, res, next) {
     const eventsDB = await this.logger.getRCEvents();
