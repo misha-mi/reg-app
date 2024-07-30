@@ -117,7 +117,7 @@ export class SyncController extends BaseContoller {
             remoteCompare: localCompare,
             localCompare: remoteCompare,
           };
-          sendUpdateData(sendData, oldIP);
+          this.sendUpdateData(sendData, oldIP);
           this.ok(res, sendData);
         }
       }
