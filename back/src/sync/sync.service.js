@@ -74,6 +74,13 @@ export class SyncService {
       );
     }
     console.log(dataForUpdate);
+    for (let id in dataForUpdate) {
+      if (dataForUpdate[id] === "remove") {
+        this.userRepository.remove(id);
+      } else {
+        this.userRepository.create(dataForUpdate[id]);
+      }
+    }
     return convertedRemoteCompare;
   }
 
