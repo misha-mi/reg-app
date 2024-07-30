@@ -11,17 +11,6 @@ import fs from "fs";
 import { LoggerRepository } from "./logger/logger.repository.js";
 import { SyncService } from "./sync/sync.service.js";
 
-// const localIP = Object.values(os.networkInterfaces())
-//   .flat()
-//   .find(
-//     (iface) =>
-//       iface.family === "IPv4" &&
-//       !iface.internal &&
-//       iface.address === "192.168.1.87"
-//   )?.address;
-
-// console.log("Локальный IP-адрес:", localIP);
-
 function getIPs() {
   let myIP;
   let otherIp = [];

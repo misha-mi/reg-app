@@ -49,16 +49,6 @@ export class SyncController extends BaseContoller {
     this.ok(res, { resp: "hi" });
   }
 
-  async generateRCObject() {
-    const eventsDB = await this.logger.getRCEvents();
-    const RCObject = {};
-    eventsDB.forEach(({ desc, context }) => {
-      const userId = desc.match(/\: ([^}]+)\)/)[1];
-      RCObject[userId] = context;
-    });
-    return RCObject;
-  }
-
   async register(req, res, next) {
     const ip = req.ip.split(":").pop();
     await this.syncService.writeUserToBD(req.body);
@@ -96,9 +86,9 @@ export class SyncController extends BaseContoller {
           console.log(err);
         } else {
           const data = JSON.parse(body);
-          const [remoteCompare, localCompare] = await this.comparisonRCObject(
-            data
-          );
+          const eventsDB = await this.logger.getRCEvents();
+          const [remoteCompare, localCompare] =
+            await this.syncService.comparisonRCObject(data, eventsDB);
           const convertedRemoteCompare = null;
           this.ok(res, {
             remoteCompare: localCompare,
@@ -109,45 +99,11 @@ export class SyncController extends BaseContoller {
     );
   }
 
-  async comparisonRCObject(remoteRCObject) {
-    const localRCObject = await this.generateRCObject();
-    const localCompare = {};
-    const remoteCompare = {};
-    for (let id in remoteRCObject) {
-      if (remoteRCObject[id] === "remove" && !localRCObject[id]) {
-        delete remoteRCObject[id];
-      } else if (localRCObject[id] !== remoteRCObject[id]) {
-        if (remoteRCObject[id] === "remove" && localRCObject[id] === "create") {
-          localCompare[id] = remoteRCObject[id];
-          delete remoteRCObject[id];
-        } else if (
-          localRCObject[id] === "remove" &&
-          remoteRCObject[id] === "create"
-        ) {
-          remoteCompare[id] = localRCObject[id];
-        } else {
-          localCompare[id] = remoteRCObject[id];
-        }
-        delete localRCObject[id];
-        delete remoteRCObject[id];
-      } else {
-        delete remoteRCObject[id];
-        delete localRCObject[id];
-      }
-    }
-
-    for (let id in localRCObject) {
-      if (localRCObject[id] === "remove") {
-        delete localRCObject[id];
-      }
-    }
-    return [{ ...remoteCompare, ...localRCObject }, localCompare];
-  }
-
   async updateUsers(compareRC) {}
 
   async getRCObject(req, res, next) {
-    const RCObject = await this.generateRCObject();
+    const eventsDB = await this.logger.getRCEvents();
+    const RCObject = await this.syncService.generateRCObject(eventsDB);
     this.ok(res, RCObject);
   }
 
