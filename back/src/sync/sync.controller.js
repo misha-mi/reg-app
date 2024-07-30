@@ -90,7 +90,7 @@ export class SyncController extends BaseContoller {
         if (err) {
           console.log(err);
         } else {
-          console.log(body);
+          this.syncService.syncUpdate(body);
         }
       }
     );

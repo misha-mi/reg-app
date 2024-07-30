@@ -70,8 +70,10 @@ export class SyncService {
       convertedRemoteCompare = await this.convertRemoteCompare(
         body.remoteCompare
       );
+      console.log(body);
+    } else {
+      console.log(body);
     }
-    console.log(body);
     return convertedRemoteCompare;
   }
 
