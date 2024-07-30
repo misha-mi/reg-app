@@ -67,8 +67,10 @@ export class SyncService {
     return [convertedRemoteCompare, localCompare];
   }
 
-  async syncUpdate(body, ignoreIP) {
-    console.log(global.IP, ignoreIP);
+  async syncUpdate(body, remoteIP) {
+    console.log(global.IP, remoteIP);
+    let isActive = global.OTHER_IPS.includes(remoteIP);
+    console.log(isActive);
     let convertedRemoteCompare = body;
     let dataForUpdate = body;
     if (body.remoteCompare) {
