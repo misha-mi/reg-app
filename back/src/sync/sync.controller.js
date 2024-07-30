@@ -94,7 +94,7 @@ export class SyncController extends BaseContoller {
             remoteCompare: localCompare,
             localCompare: remoteCompare,
           };
-          this.ok(res, "success");
+          this.ok(res, sendData);
         }
       }
     );
