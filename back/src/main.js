@@ -52,19 +52,6 @@ async function bootstrap() {
   const userService = new UserService(userRepository);
   const userContoller = new UserController(logger, userService);
 
-  console.log(
-    await prismaClient.user.findMany({
-      where: {
-        NOT: [
-          { id: "14286e95-34c3-4252-948d-5b17fcb4a13c" },
-          { id: "018170ab-552b-47dd-92ad-8d3a5cfad017" },
-          { id: "14286e95-34c3-4252-948d-5b17fcb4a13c" },
-          { id: "1fc935aa-c38f-4d6c-b72d-2f175a8bafea" },
-        ],
-      },
-    })
-  );
-
   try {
     await prismaClient.$connect();
     logger.log({
