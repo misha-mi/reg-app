@@ -2,9 +2,9 @@ import { BaseContoller } from "../common/base.controller.js";
 import request from "request";
 
 export class SyncController extends BaseContoller {
-  constructor(logger, userController) {
+  constructor(logger, syncService) {
     super(logger);
-    this.userController = userController;
+    this.syncService = syncService;
     this.bindRoutes([
       {
         method: "get",
@@ -61,7 +61,7 @@ export class SyncController extends BaseContoller {
 
   async register(req, res, next) {
     const ip = req.ip.split(":").pop();
-    await this.userController.writeUserToBD(req.body);
+    await this.syncService.writeUserToBD(req.body);
     this.logger.log({
       context: "create",
       desc: `User has been created (sync) (ID: ${req.body.id})`,
@@ -74,7 +74,7 @@ export class SyncController extends BaseContoller {
   async removeUser(req, res, next) {
     const ip = req.ip.split(":").pop();
     const id = req.params.id;
-    await this.userController.removeUserFromBD(id);
+    await this.syncService.removeUserFromBD(id);
     this.logger.log({
       context: "remove",
       desc: `The user has been deleted (sync) (ID: ${id})`,
@@ -99,7 +99,11 @@ export class SyncController extends BaseContoller {
           const [remoteCompare, localCompare] = await this.comparisonRCObject(
             data
           );
-          this.ok(res, remoteCompare);
+          const convertedRemoteCompare = null;
+          this.ok(res, {
+            remoteCompare: localCompare,
+            localCompare: convertedRemoteCompare,
+          });
         }
       }
     );

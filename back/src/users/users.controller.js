@@ -236,12 +236,4 @@ export class UserController extends BaseContoller {
     });
     this.ok(res, status);
   }
-
-  async removeUserFromBD(id) {
-    return await this.userService.removeUserFromBD(id);
-  }
-
-  async writeUserToBD(newUser) {
-    return await this.userService.writeUserToBD(newUser);
-  }
 }

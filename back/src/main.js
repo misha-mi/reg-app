@@ -9,6 +9,7 @@ import { SyncController } from "./sync/sync.controller.js";
 import os from "os";
 import fs from "fs";
 import { LoggerRepository } from "./logger/logger.repository.js";
+import { SyncService } from "./sync/sync.service.js";
 
 // const localIP = Object.values(os.networkInterfaces())
 //   .flat()
@@ -52,6 +53,9 @@ async function bootstrap() {
   const userService = new UserService(userRepository);
   const userContoller = new UserController(logger, userService);
 
+  const syncService = new SyncService(userRepository);
+  const syncController = new SyncController(logger, syncService);
+
   try {
     await prismaClient.$connect();
     logger.log({
@@ -70,7 +74,7 @@ async function bootstrap() {
   const app = new App(
     logger,
     userContoller,
-    new SyncController(logger, userContoller),
+    syncController,
     new ExeptionFilter(logger)
   );
   await app.init();
