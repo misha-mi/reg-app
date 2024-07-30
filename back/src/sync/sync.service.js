@@ -95,13 +95,14 @@ export class SyncService {
 
   async removeUserFromBD(id) {
     try {
+      const user = await this.userRepository.remove(id);
       this.logger.log({
         context: "remove",
         desc: `The user has been deleted (sync) (ID: ${id})`,
         isAudit: true,
         ip,
       });
-      return await this.userRepository.remove(id);
+      return user;
     } catch {
       return null;
     }
@@ -116,7 +117,7 @@ export class SyncService {
         isAudit: true,
         ip,
       });
-      return await this.userRepository.create(user);
+      return user;
     } catch {
       return null;
     }
