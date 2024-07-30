@@ -64,6 +64,17 @@ export class SyncService {
     return [convertedRemoteCompare, localCompare];
   }
 
+  async syncUpdate(body) {
+    let convertedRemoteCompare = "success";
+    if (body.remoteCompare) {
+      const convertedRemoteCompare = this.syncService.convertRemoteCompare(
+        body.remoteCompare
+      );
+      console.log(convertedRemoteCompare);
+    }
+    return convertedRemoteCompare;
+  }
+
   async removeUserFromBD(id) {
     try {
       return await this.userRepository.remove(id);

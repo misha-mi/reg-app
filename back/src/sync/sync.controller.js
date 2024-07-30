@@ -90,8 +90,7 @@ export class SyncController extends BaseContoller {
         if (err) {
           console.log(err);
         } else {
-          const data = JSON.parse(body);
-          console.log(data);
+          console.log(body);
         }
       }
     );
@@ -125,34 +124,8 @@ export class SyncController extends BaseContoller {
   }
 
   async syncUpdate({ body }, res, next) {
-    if (body.remoteCompare) {
-      const convertedRemoteCompare = this.syncService.convertRemoteCompare(
-        body.remoteCompare
-      );
-      console.log(body);
-      this.ok(res, convertedRemoteCompare);
-      // request.get(
-      //   {
-      //     url: `http://${oldIP}:${process.env.SERVER_PORT}/sync/getRCOobject`,
-      //   },
-      //   async (err, resp, body) => {
-      //     if (err) {
-      //       console.log(err);
-      //     } else {
-      //       const data = JSON.parse(body);
-      //       const eventsDB = await this.logger.getRCEvents();
-      //       const [remoteCompare, localCompare] =
-      //         await this.syncService.comparisonRCObject(data, eventsDB);
-
-      //       const sendData = {
-      //         remoteCompare: localCompare,
-      //         localCompare: remoteCompare,
-      //       };
-      //       this.ok(res, sendData);
-      //     }
-      //   }
-      // );
-    }
+    const convertedRemoteCompare = await this.syncService.syncUpdate(body);
+    this.ok(res, convertedRemoteCompare);
   }
 
   async getRCObject(req, res, next) {
