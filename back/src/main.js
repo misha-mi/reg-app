@@ -14,6 +14,7 @@ import { SyncService } from "./sync/sync.service.js";
 function getIPs() {
   let myIP;
   let otherIp = [];
+  let allIp = [];
   const localIPs = Object.values(os.networkInterfaces())
     .flat()
     .filter((iface) => iface.family === "IPv4" && !iface.internal)
@@ -23,13 +24,14 @@ function getIPs() {
     .split("\n")
     .filter((ip) => ip.length);
   IPs.forEach((ip) => {
+    allIp.push(ip);
     if (localIPs.includes(ip)) {
       myIP = ip;
     } else if (myIP) {
       otherIp.push(ip);
     }
   });
-  return [myIP, otherIp];
+  return [myIP, otherIp, allIp];
 }
 
 async function bootstrap() {
@@ -69,5 +71,5 @@ async function bootstrap() {
   await app.init();
 }
 
-[global.IP, global.OTHER_IPS] = getIPs();
+[global.IP, global.OTHER_IPS, global.ALL_IPS] = getIPs();
 bootstrap();

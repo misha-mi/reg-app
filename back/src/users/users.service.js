@@ -225,7 +225,7 @@ MYSQL_SCRIPT`;
     const config = {
       login,
       password: password,
-      ip: ["192.168.2.10"],
+      ip: global.ALL_IPS,
       domain,
       number: user.number,
     };

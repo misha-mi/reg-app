@@ -28,6 +28,9 @@ const Pages = () => {
 
 const App = () => {
   const [role, setRole] = useState();
+  const [password, setPassword] = useState("");
+  const [id, setId] = useState("");
+
   return (
     <div className="app">
       <div className="container">
@@ -55,7 +58,10 @@ const App = () => {
                 path="/"
                 element={<AdminRoute isRights={role === "user"} to="/" />}
               >
-                <Route path="download" element={<DownloadPage />} />
+                <Route
+                  path="download"
+                  element={<DownloadPage password={password} id={id} />}
+                />
               </Route>
             </Route>
 
@@ -64,7 +70,17 @@ const App = () => {
               element={<PrivateRoute setRole={setRole} />}
               isRights={true}
             >
-              <Route path="/auth" element={<AuthPage setRole={setRole} />} />
+              <Route
+                path="/auth"
+                element={
+                  <AuthPage
+                    setRole={setRole}
+                    setId={setId}
+                    password={password}
+                    setPassword={setPassword}
+                  />
+                }
+              />
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

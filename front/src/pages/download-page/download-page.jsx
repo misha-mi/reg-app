@@ -1,6 +1,6 @@
 import deleteConfig from "../../services/delete-config";
 
-const DownloadPage = () => {
+const DownloadPage = ({ password, id }) => {
   const downloadConfig = async () => {
     const response = await fetch(
       `${process.env.REACT_APP_API_URL}/users/getConfig`,
@@ -11,8 +11,8 @@ const DownloadPage = () => {
           "Content-Type": "application/json;charset=utf-8",
         },
         body: JSON.stringify({
-          id: "81d827f0-2cd4-41ef-912a-e1a89bd8b429",
-          password: "Qwerty123!",
+          id,
+          password,
         }),
       }
     );
@@ -27,14 +27,11 @@ const DownloadPage = () => {
       link.click();
       link.remove();
     }
-    deleteConfig("81d827f0-2cd4-41ef-912a-e1a89bd8b429");
+    deleteConfig(id);
   };
+  const buttonLoad = <div onClick={downloadConfig}>hello</div>;
 
-  return (
-    <div className="downloadPage">
-      <div onClick={downloadConfig}>hello</div>
-    </div>
-  );
+  return <div className="downloadPage">{buttonLoad}</div>;
 };
 
 export default DownloadPage;

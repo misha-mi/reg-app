@@ -6,9 +6,8 @@ import postLogin from "../../services/post-login";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../ui/spinner/spinner";
 
-const AuthPage = ({ setRole }) => {
+const AuthPage = ({ setRole, setId, password, setPassword }) => {
   const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,7 +17,8 @@ const AuthPage = ({ setRole }) => {
     setIsLoading(true);
     postLogin({ login, password })
       .then((res) => {
-        setRole(res.data);
+        setRole(res.data.role);
+        setId(res.data.id);
         navigate("/");
       })
       .catch((res) => setErrors(res.response.data.error.split(",")))
