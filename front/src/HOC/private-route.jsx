@@ -10,8 +10,10 @@ const PrivateRoute = ({ forAuthorized, setRole, role }) => {
   useEffect(() => {
     getUser()
       .then((res) => {
-        setRole(res.data.role);
-        setIsAuth(true);
+        if (res.data.role === "admin") {
+          setRole(res.data.role);
+          setIsAuth(true);
+        }
       })
       .catch(() => console.log("error"))
       .finally(() => {

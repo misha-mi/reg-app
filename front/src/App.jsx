@@ -12,8 +12,6 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import DownloadPage from "./pages/download-page/download-page";
-import AdminRoute from "./HOC/admin-route";
 
 const Pages = () => {
   return (
@@ -42,26 +40,9 @@ const App = () => {
                 <PrivateRoute forAuthorized setRole={setRole} role={role} />
               }
             >
-              <Route
-                path="/"
-                element={
-                  <AdminRoute isRights={role === "admin"} to={"/download"} />
-                }
-              >
-                <Route path="/" element={<Pages />}>
-                  <Route path="" element={<UsersPage />} />
-                  <Route path="logs" element={<LogsPage />} />
-                </Route>
-              </Route>
-
-              <Route
-                path="/"
-                element={<AdminRoute isRights={role === "user"} to="/" />}
-              >
-                <Route
-                  path="download"
-                  element={<DownloadPage password={password} id={id} />}
-                />
+              <Route path="/" element={<Pages />}>
+                <Route path="" element={<UsersPage />} />
+                <Route path="logs" element={<LogsPage />} />
               </Route>
             </Route>
 
