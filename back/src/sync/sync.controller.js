@@ -74,16 +74,18 @@ export class SyncController extends BaseContoller {
     this.ok(res, `${global.IP}: Remove success (id:${id})`);
   }
 
-  async logUpdate(objectRC) {
+  async logUpdate(objectRC, ip) {
     for (let id in objectRC) {
       if (objectRC[id] === "remove") {
         this.logger.log({
+          ip,
           context: "remove",
           desc: `The user has been deleted (sync) (ID: ${id})`,
           isAudit: true,
         });
       } else {
         this.logger.log({
+          ip,
           context: "create",
           desc: `User has been created (sync) (ID: ${id})`,
           isAudit: true,
@@ -106,7 +108,7 @@ export class SyncController extends BaseContoller {
           console.log(err);
         } else {
           await this.syncService.syncUpdate(body, ip);
-          this.logUpdate(body);
+          this.logUpdate(body, ip);
         }
       }
     );
