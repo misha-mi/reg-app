@@ -8,7 +8,7 @@ export class UserService {
     this.userRepository = userRepository;
   }
 
-  async doCommandLine(command, serviceName) {
+  doCommandLine(command, serviceName, call) {
     exec(command, (error, stdout, stderr) => {
       if (error) {
         console.log(`[${serviceName}] error: ${error.message}`);
@@ -19,6 +19,9 @@ export class UserService {
         return;
       }
       console.log(`[${serviceName}] stdout: ${stdout}`);
+      if (call) {
+        call(stdout);
+      }
     });
   }
 
@@ -114,11 +117,21 @@ faxdetect=no
     const removeFromDB = `docker exec -i mail_bs mysql<<MYSQL_SCRIPT 
 USE vmail;
 DELETE FROM mailbox WHERE username="${login}";
+DELETE FROM used_quota WHERE username="${login}";
+DELETE FROM forwardings WHERE address="${login}";
 MYSQL_SCRIPT`;
-    const removeUsersFiles = `docker exec -i mail_bs rm -rf /var/vmail/vmail1/${domain}/${arrSumbol[0]}/${arrSumbol[1]}/${arrSumbol[2]}/${loginName}-*`;
+    const lsUsersFiles = `docker exec -i mail_bs ls /var/vmail/vmail1/${domain}/${arrSumbol[0]}/${arrSumbol[1]}/${arrSumbol[2]}`;
 
-    await this.doCommandLine(removeFromDB, "mail-bs");
-    await this.doCommandLine(removeUsersFiles, "mail-bs");
+    this.doCommandLine(removeFromDB, "mail-bs");
+    this.doCommandLine(lsUsersFiles, "mail-bs", (dirs) => {
+      const mailDir = dirs.split("\n").find((dir) => {
+        return new RegExp(
+          `${loginName}-\\d\\d\\d\\d.\\d\\d.\\d\\d.\\d\\d.\\d\\d.\\d\\d`
+        ).test(dir);
+      });
+      const removeUsersFiles = `docker exec -i mail_bs rm -rf /var/vmail/vmail1/${domain}/${arrSumbol[0]}/${arrSumbol[1]}/${arrSumbol[2]}/${mailDir}`;
+      this.doCommandLine(removeUsersFiles, "mail-bs");
+    });
   }
 
   async createUser({ login, name, password, number, id }) {
@@ -137,13 +150,13 @@ MYSQL_SCRIPT`;
     const newUser = new User({ login, name, number, id, isReg: true });
 
     await newUser.setPassword(password);
-    await this.doCommandLine(
+    this.doCommandLine(
       `docker exec -i msg prosodyctl register ${newUser.login.split("@")[0]} ${
         newUser.login.split("@")[1]
       } ${password}`,
       "msg-bs"
     );
-    await this.doCommandLine(
+    this.doCommandLine(
       `docker exec -i mail_bs /opt/iredmail/bin/create_user ${login} ${password} 0`,
       "mail-bs"
     );
@@ -155,7 +168,7 @@ MYSQL_SCRIPT`;
     try {
       const { login, number } = await this.userRepository.getUser(id);
       this.removeSIPUser(number);
-      await this.doCommandLine(
+      this.doCommandLine(
         `docker exec -i msg prosodyctl deluser ${login}`,
         "msg-bs"
       );
@@ -258,7 +271,7 @@ MYSQL_SCRIPT`;
       for (let i = 0; i < ids.length; i++) {
         const { login, number } = await this.userRepository.getUser(ids[i]);
         this.removeSIPUser(number);
-        await this.doCommandLine(
+        this.doCommandLine(
           `docker exec -i msg prosodyctl deluser ${login}`,
           "msg-bs"
         );
