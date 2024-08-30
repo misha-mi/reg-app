@@ -4,8 +4,7 @@ import { useState } from "react";
 
 const PopupFilter = ({ tabsNames, activeTab, setActiveTab }) => {
   const [isOpen, setIsOpen] = useState(false);
-  // const [activeTab, setActiveTab] = useState(tabsNames[0]);
-  console.log(activeTab, tabsNames);
+
   return (
     <div className="popup-filter">
       <Button
