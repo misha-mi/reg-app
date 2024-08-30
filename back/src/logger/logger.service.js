@@ -80,4 +80,8 @@ export class LoggerService {
   async getRCEvents() {
     return await this.loggerRepository.getRCEvents();
   }
+
+  async getLogs() {
+    return await this.loggerRepository.getLogs();
+  }
 }

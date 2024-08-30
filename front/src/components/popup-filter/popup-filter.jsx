@@ -5,7 +5,7 @@ import { useState } from "react";
 const PopupFilter = ({ tabsNames, activeTab, setActiveTab }) => {
   const [isOpen, setIsOpen] = useState(false);
   // const [activeTab, setActiveTab] = useState(tabsNames[0]);
-
+  console.log(activeTab, tabsNames);
   return (
     <div className="popup-filter">
       <Button
@@ -22,7 +22,9 @@ const PopupFilter = ({ tabsNames, activeTab, setActiveTab }) => {
           return (
             <button
               className={`popup-filter__tab ${
-                activeTab === tabsNames[id] ? "popup-filter_active" : ""
+                activeTab === tabsNames[id].toLowerCase()
+                  ? "popup-filter_active"
+                  : ""
               }`}
               onClick={() => {
                 setActiveTab(tabsNames[id].toLowerCase());

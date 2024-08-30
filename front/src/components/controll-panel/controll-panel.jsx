@@ -16,7 +16,7 @@ const ControllPanel = ({
   isDisableRemoveButton,
 }) => {
   const tabsNames = isLogs
-    ? ["Status", "Context", "ID", "Description"]
+    ? ["Server IP", "Source IP", "Description"]
     : ["Name", "Login", "Number", "ID"];
 
   const buttons = isLogs ? (

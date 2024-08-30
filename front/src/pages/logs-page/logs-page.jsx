@@ -4,41 +4,44 @@ import Log from "../../components/log/log";
 import { useState } from "react";
 
 const LogsPage = () => {
-  const [searchBy, setSearchBy] = useState("status");
+  const [searchBy, setSearchBy] = useState("description");
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <div className="logs-page">
-      <ControllPanel isLogs searchBy={searchBy} setSearchBy={setSearchBy} />
+      <ControllPanel
+        isLogs
+        searchBy={searchBy}
+        setSearchBy={setSearchBy}
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+      />
       <Log
         time={"Date"}
-        status={"Status"}
-        context={"Context"}
-        userId={"UserId"}
+        serverId={"Server IP"}
+        sourceId={"Source IP"}
         description={"Description"}
         isColumnName
       />
       <div className="logs-page__logs">
         <Log
           time={"6/26/2024, 2:37:31 PM"}
-          status={"SUCCESS"}
-          context={"SQL"}
-          userId={"0b09f17d-4407-48f1..."}
+          serverId={"192.168.2.10"}
+          sourceId={"192.168.2.10"}
           description={
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eaque provident labore ducimus ad illo quae magnam quis veritatis, repudiandae rerum, enim officia, cupiditate pariatur obcaecati possimus culpa aliquid sint alias."
+            "The configuration file has been transferred. (id: da402c68-babd-40eb-ab78-3c380edccfe1)"
           }
         />
         <Log
           time={"6/26/2024, 2:37:31 PM"}
-          status={"LOG"}
-          context={"SQL"}
-          userId={"0b09f17d-4407-48f1..."}
+          serverId={"192.168.2.10"}
+          sourceId={"192.168.2.10"}
           description={"Successful connection to the database"}
         />
         <Log
           time={"6/26/2024, 2:37:31 PM"}
-          status={"ERORR"}
-          context={"SQL"}
-          userId={"0b09f17d-4407-48f1..."}
+          serverId={"192.168.2.10"}
+          sourceId={"192.168.2.10"}
           description={"Successful connection to the database"}
         />
       </div>

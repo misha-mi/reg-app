@@ -75,6 +75,14 @@ export class UserController extends BaseContoller {
           new AuthMiddleware({ context: "getUser", role: ["admin", "user"] }),
         ],
       },
+      {
+        method: "get",
+        path: "/getLogs",
+        func: this.getLogs,
+        middlewares: [
+          new AuthMiddleware({ context: "getLogs", role: ["admin"] }),
+        ],
+      },
     ]);
   }
 
@@ -214,5 +222,10 @@ export class UserController extends BaseContoller {
       removeRemoteUser(id);
     });
     this.ok(res, status);
+  }
+
+  async getLogs(req, res, next) {
+    const logs = await this.logger.getLogs();
+    this.ok(res, logs);
   }
 }

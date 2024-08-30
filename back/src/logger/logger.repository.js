@@ -23,4 +23,8 @@ export class LoggerRepository {
       },
     });
   }
+
+  async getLogs() {
+    return this.prismaClient.logger.findMany();
+  }
 }
