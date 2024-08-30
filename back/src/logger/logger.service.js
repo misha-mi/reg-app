@@ -41,38 +41,38 @@ export class LoggerService {
     }
   }
 
-  async log({ context, desc, isAudit, ip }) {
+  async log({ context, desc, isAudit, serverIp, sourceIp }) {
     console.log(this._formatString("log", context, desc));
     if (isAudit) {
       await this.loggerRepository.create({
-        type: "log",
         context,
         desc,
-        ip: ip || global.IP,
+        serverIp: serverIp || global.IP,
+        sourceIp: sourceIp || serverIp || global.IP,
       });
     }
   }
 
-  async error({ context, desc, isAudit, ip }) {
+  async error({ context, desc, isAudit, serverIp, sourceIp }) {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
       await this.loggerRepository.create({
-        type: "error",
         context,
         desc,
-        ip: ip || global.IP,
+        serverIp: serverIp || global.IP,
+        sourceIp: sourceIp || serverIp || global.IP,
       });
     }
   }
 
-  async warn({ context, desc, isAudit, ip }) {
+  async warn({ context, desc, isAudit, serverIp, sourceIp }) {
     console.log(this._formatString("error", context, desc));
     if (isAudit) {
       await this.loggerRepository.create({
-        type: "warn",
         context,
         desc,
-        ip: ip || global.IP,
+        serverIp: serverIp || global.IP,
+        sourceIp: sourceIp || serverIp || global.IP,
       });
     }
   }

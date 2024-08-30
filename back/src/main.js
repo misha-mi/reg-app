@@ -52,13 +52,11 @@ async function bootstrap() {
     logger.log({
       context: "database",
       desc: "Successful connection to the database",
-      isAudit: true,
     });
   } catch (e) {
     logger.error({
       context: "database",
       desc: `Database connection error: ${e.message}`,
-      isAudit: true,
     });
   }
 

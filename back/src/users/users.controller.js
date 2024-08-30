@@ -78,8 +78,9 @@ export class UserController extends BaseContoller {
     ]);
   }
 
-  async register({ body }, res, next) {
-    const result = await this.userService.createUser(body);
+  async register(req, res, next) {
+    const ip = req.ip.split(":").pop();
+    const result = await this.userService.createUser(req.body);
     if (typeof result === "string" || Array.isArray(result)) {
       return next(new HTTPError(422, result, "register"));
     }
@@ -96,23 +97,34 @@ export class UserController extends BaseContoller {
       context: "create",
       desc: `User has been created. (ID: ${result.id})`,
       isAudit: true,
+      sourceIp: ip,
     });
     const [loginName, domain] = login.split("@");
     this.ok(res, { login: loginName, domain, name, id, number });
   }
 
   async login(req, res, next) {
+    const ip = req.ip.split(":").pop();
     const result = await this.userService.validateUser(req.body);
     if (result) {
       const jwt = await this.userService.setToken(result.id, result.role);
-      this.logger.log({
-        context: "login",
-        desc: `The user has logged in. (name: ${result.name}, role: ${result.role})`,
-        isAudit: true,
-      });
+      result.role === "admin"
+        ? this.logger.log({
+            context: "login",
+            desc: `The admin has logged in. (name: ${result.name})`,
+            isAudit: true,
+            sourceIp: ip,
+          })
+        : null;
       res.cookie("accessToken", jwt, { maxAge: 3600000, httpOnly: true });
       this.ok(res, { role: result.role, id: result.id });
     } else {
+      this.logger.error({
+        context: "login",
+        desc: `Failed authorization attempt`,
+        isAudit: true,
+        sourceIp: ip,
+      });
       next(new HTTPError(401, "Invalid login or password", "login"));
     }
   }
@@ -122,8 +134,9 @@ export class UserController extends BaseContoller {
     this.ok(res, { users });
   }
 
-  async getConfig({ body }, res, next) {
-    const { id, password } = body;
+  async getConfig(req, res, next) {
+    const ip = req.ip.split(":").pop();
+    const { id, password } = req.body;
     const pathToConfig = await this.userService.getConfig(id, password);
     if (!pathToConfig) {
       next(
@@ -134,6 +147,7 @@ export class UserController extends BaseContoller {
         context: "getConfig",
         desc: `The configuration file has been transferred. (id: ${id})`,
         isAudit: true,
+        sourceIp: ip,
       });
       return res.download(pathToConfig); // вынести в базовый контроллер
       // this.ok(res, config);
@@ -147,6 +161,7 @@ export class UserController extends BaseContoller {
   }
 
   async removeUser(req, res, next) {
+    const ip = req.ip.split(":").pop();
     const id = req.params.id;
     const user = await this.userService.removeUser(id);
     if (!user) {
@@ -159,6 +174,7 @@ export class UserController extends BaseContoller {
       context: "remove",
       desc: `The user has been deleted (ID: ${id})`,
       isAudit: true,
+      sourceIp: ip,
     });
     this.ok(res, user.id);
   }
@@ -182,16 +198,18 @@ export class UserController extends BaseContoller {
     }
   }
 
-  async removeUsers({ body }, res, next) {
-    const status = await this.userService.removeUsers(body);
+  async removeUsers(req, res, next) {
+    const ip = req.ip.split(":").pop();
+    const status = await this.userService.removeUsers(req.body);
     if (!status) {
       return next(new HTTPError(422, "Something broke down", "removeUsers"));
     }
-    body.forEach((id) => {
+    req.body.forEach((id) => {
       this.logger.log({
         context: "remove",
         desc: `The users has been deleted (ID: ${id})`,
         isAudit: true,
+        sourceIp: ip,
       });
       removeRemoteUser(id);
     });

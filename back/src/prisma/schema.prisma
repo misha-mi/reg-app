@@ -26,8 +26,8 @@ model User {
 
 model Logger {
   id       String @id @default(uuid())
-  ip       String
-  type     String
+  serverIp String
+  sourceIp String
   context  String 
   desc     String
   time     DateTime @default(now())

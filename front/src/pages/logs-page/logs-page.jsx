@@ -1,11 +1,14 @@
 import "./logs-page.sass";
 import ControllPanel from "../../components/controll-panel/controll-panel";
 import Log from "../../components/log/log";
+import { useState } from "react";
 
 const LogsPage = () => {
+  const [searchBy, setSearchBy] = useState("status");
+
   return (
     <div className="logs-page">
-      <ControllPanel isLogs />
+      <ControllPanel isLogs searchBy={searchBy} setSearchBy={setSearchBy} />
       <Log
         time={"Date"}
         status={"Status"}

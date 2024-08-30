@@ -50,42 +50,42 @@ export class SyncController extends BaseContoller {
   }
 
   async register(req, res, next) {
-    const ip = req.ip.split(":").pop();
+    const ip = req.ip.split(":").pop(); // это же ip адресс сервера, который инициализирует запрос синхронизации, нужен IP источника запроса на создание/удаление
     await this.syncService.writeUserToBD(req.body);
     this.logger.log({
       context: "create",
       desc: `User has been created (sync) (ID: ${req.body.id})`,
       isAudit: true,
-      ip,
+      sourceIp: ip,
     });
     this.ok(res, `${global.IP}: Create success (id:${req.body.id})`);
   }
 
   async removeUser(req, res, next) {
-    const ip = req.ip.split(":").pop();
-    const id = req.params.id;
+    const ip = req.ip.split(":").pop(); // это же ip адресс сервера, который инициализирует запрос синхронизации, нужен IP источника запроса на создание/удаление
+    const id = req.params.id; // Добавить в конвертер RCO преобразвание в массив типа id:{event, sourceIP}?
     await this.syncService.removeUserFromBD(id);
     this.logger.log({
       context: "remove",
       desc: `The user has been deleted (sync) (ID: ${id})`,
       isAudit: true,
-      ip,
+      sourceIp: ip,
     });
     this.ok(res, `${global.IP}: Remove success (id:${id})`);
   }
 
-  async logUpdate(objectRC, ip) {
+  async logUpdate(objectRC, serverIp) {
     for (let id in objectRC) {
       if (objectRC[id] === "remove") {
         this.logger.log({
-          ip,
+          serverIp,
           context: "remove",
           desc: `The user has been deleted (sync) (ID: ${id})`,
           isAudit: true,
         });
       } else {
         this.logger.log({
-          ip,
+          serverIp,
           context: "create",
           desc: `User has been created (sync) (ID: ${id})`,
           isAudit: true,
@@ -120,6 +120,14 @@ export class SyncController extends BaseContoller {
     if (oldIP === global.IP) {
       return this.ok(res, "It's my ip");
     }
+
+    this.logger.log({
+      context: "syncAudit",
+      desc: `Syncing credentials`,
+      isAudit: true,
+      sourceIp: oldIP,
+    });
+
     request.get(
       {
         url: `http://${oldIP}:${process.env.SERVER_PORT}/sync/getRCOobject`,

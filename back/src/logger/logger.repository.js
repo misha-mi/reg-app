@@ -3,9 +3,9 @@ export class LoggerRepository {
     this.prismaClient = prismaClient;
   }
 
-  async create({ type, context, desc, ip }) {
+  async create({ context, desc, serverIp, sourceIp }) {
     return this.prismaClient.logger.create({
-      data: { type, context, desc, ip },
+      data: { context, desc, serverIp, sourceIp },
     });
   }
 
