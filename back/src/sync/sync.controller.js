@@ -127,17 +127,20 @@ export class SyncController extends BaseContoller {
   }
 
   upServeses(req, res, next) {
+    console.log("Up");
     return this.ok(res, "Up on " + global.IP);
   }
 
   pushDateToNewServ(req, res, next) {
     const newServIP = req.params.ip;
+    console.log("Push to " + newServIP);
     return this.ok(res, "Push to " + newServIP);
   }
 
   async syncAudit(req, res, next) {
     // Тут необходимо поднимать сервисы
     const oldIP = req.params.ip;
+    console.log("Sync with" + oldIP);
     return this.ok(res, "Sync with" + oldIP);
     this.logger.log({
       context: "syncAudit",
