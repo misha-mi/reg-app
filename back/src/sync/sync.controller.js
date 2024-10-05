@@ -32,6 +32,18 @@ export class SyncController extends BaseContoller {
       },
       {
         method: "get",
+        path: "/upServeses/:ip",
+        func: this.upServeses,
+        middleware: [],
+      },
+      {
+        method: "get",
+        path: "/pushDateToNewServ/:ip",
+        func: this.pushDateToNewServ,
+        middleware: [],
+      },
+      {
+        method: "get",
         path: "/getRCOobject",
         func: this.getRCObject,
         middleware: [],
@@ -114,14 +126,19 @@ export class SyncController extends BaseContoller {
     );
   }
 
+  upServeses(req, res, next) {
+    return this.ok(res, "Up on " + global.IP);
+  }
+
+  pushDateToNewServ(req, res, next) {
+    const newServIP = req.params.ip;
+    return this.ok(res, "Push to " + newServIP);
+  }
+
   async syncAudit(req, res, next) {
     // Тут необходимо поднимать сервисы
     const oldIP = req.params.ip;
-    console.log(oldIP, global.IP);
-    if (oldIP === global.IP) {
-      console.log("up");
-      return this.ok(res, "It's my ip");
-    }
+    return this.ok(res, "Sync with" + oldIP);
     this.logger.log({
       context: "syncAudit",
       desc: `Syncing credentials`,
