@@ -117,6 +117,7 @@ export class SyncController extends BaseContoller {
   async syncAudit(req, res, next) {
     // Тут необходимо поднимать сервисы
     const oldIP = req.params.ip;
+    console.log(oldIP, global.IP);
     if (oldIP === global.IP) {
       console.log("up");
       return this.ok(res, "It's my ip");
