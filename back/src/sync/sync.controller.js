@@ -118,9 +118,9 @@ export class SyncController extends BaseContoller {
     // Тут необходимо поднимать сервисы
     const oldIP = req.params.ip;
     if (oldIP === global.IP) {
+      console.log("up");
       return this.ok(res, "It's my ip");
     }
-
     this.logger.log({
       context: "syncAudit",
       desc: `Syncing credentials`,

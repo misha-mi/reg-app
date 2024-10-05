@@ -41,29 +41,21 @@ const LogsPage = () => {
       />
       <div className="logs-page__logs">
         {logs
-          .map((log) => (
-            <Log
-              key={log.id}
-              time={new Date(log.time).toLocaleDateString("en-US", optionDate)}
-              serverId={log.serverIp}
-              sourceId={log.sourceIp}
-              description={log.desc}
-            />
-          ))
+          .map((log) => {
+            const { id, time, serverIp, sourceIp, desc } = log;
+            if (log.desc.includes(searchValue)) {
+              return (
+                <Log
+                  key={id}
+                  time={new Date(time).toLocaleDateString("en-US", optionDate)}
+                  serverId={serverIp}
+                  sourceId={sourceIp}
+                  description={desc}
+                />
+              );
+            }
+          })
           .reverse()}
-
-        <Log
-          time={"6/26/2024, 2:37:31 PM"}
-          serverId={"192.168.2.10"}
-          sourceId={"192.168.2.10"}
-          description={"Successful connection to the database"}
-        />
-        <Log
-          time={"6/26/2024, 2:37:31 PM"}
-          serverId={"192.168.2.10"}
-          sourceId={"192.168.2.10"}
-          description={"Successful connection to the database"}
-        />
       </div>
     </div>
   );

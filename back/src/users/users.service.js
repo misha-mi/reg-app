@@ -61,7 +61,7 @@ callcounter=yes
 faxdetect=no
 `;
     fs.appendFileSync(
-      `/home/${process.env.USER_NAME}/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf`,
+      `/home/${process.env.USER_NAME}/final/sip/data/izpbx/etc/asterisk/sip_custom.conf`,
       configString,
       function (error) {
         if (error) throw error; // если возникла ошибка
@@ -76,7 +76,7 @@ faxdetect=no
   removeSIPUser(phoneNumber) {
     let sipUsers = fs
       .readFileSync(
-        `/home/${process.env.USER_NAME}/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf`,
+        `/home/${process.env.USER_NAME}/final/sip/data/izpbx/etc/asterisk/sip_custom.conf`,
         "utf8",
         function (error, data) {
           console.log("Асинхронное чтение файла");
@@ -95,7 +95,7 @@ faxdetect=no
     }, "");
 
     fs.writeFileSync(
-      `/home/${process.env.USER_NAME}/sip-bs/data/izpbx/etc/asterisk/sip_custom.conf`,
+      `/home/${process.env.USER_NAME}/final/sip/data/izpbx/etc/asterisk/sip_custom.conf`,
       configString,
       function (error) {
         if (error) throw error; // если возникла ошибка
