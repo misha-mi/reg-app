@@ -1,28 +1,11 @@
 import { User } from "./user.entity.js";
 import jsonwebtoken from "jsonwebtoken";
-import { exec } from "child_process";
+import doCommandLine from "../common/do-command-line.js";
 import fs from "fs";
 
 export class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
-  }
-
-  doCommandLine(command, serviceName, call) {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.log(`[${serviceName}] error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.log(`[${serviceName}] stderr: ${stderr}`);
-        return;
-      }
-      console.log(`[${serviceName}] stdout: ${stdout}`);
-      if (call) {
-        call(stdout);
-      }
-    });
   }
 
   createSIPUser(phoneNumber, password) {
@@ -70,7 +53,7 @@ faxdetect=no
         console.log(data);
       }
     );
-    this.doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
+    doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
   }
 
   removeSIPUser(phoneNumber) {
@@ -104,7 +87,7 @@ faxdetect=no
         console.log(data);
       }
     );
-    this.doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
+    doCommandLine("docker exec -i izpbx fwconsole reload", "sip-bs");
   }
 
   async removeMailUser(login) {
@@ -122,15 +105,15 @@ DELETE FROM forwardings WHERE address="${login}";
 MYSQL_SCRIPT`;
     const lsUsersFiles = `docker exec -i mail_bs ls /var/vmail/vmail1/${domain}/${arrSumbol[0]}/${arrSumbol[1]}/${arrSumbol[2]}`;
 
-    this.doCommandLine(removeFromDB, "mail-bs");
-    this.doCommandLine(lsUsersFiles, "mail-bs", (dirs) => {
+    doCommandLine(removeFromDB, "mail-bs");
+    doCommandLine(lsUsersFiles, "mail-bs", (dirs) => {
       const mailDir = dirs.split("\n").find((dir) => {
         return new RegExp(
           `${loginName}-\\d\\d\\d\\d.\\d\\d.\\d\\d.\\d\\d.\\d\\d.\\d\\d`
         ).test(dir);
       });
       const removeUsersFiles = `docker exec -i mail_bs rm -rf /var/vmail/vmail1/${domain}/${arrSumbol[0]}/${arrSumbol[1]}/${arrSumbol[2]}/${mailDir}`;
-      this.doCommandLine(removeUsersFiles, "mail-bs");
+      doCommandLine(removeUsersFiles, "mail-bs");
     });
   }
 
@@ -150,13 +133,13 @@ MYSQL_SCRIPT`;
     const newUser = new User({ login, name, number, id, status: "registered" });
 
     await newUser.setPassword(password);
-    this.doCommandLine(
+    doCommandLine(
       `docker exec -i msg prosodyctl register ${newUser.login.split("@")[0]} ${
         newUser.login.split("@")[1]
       } ${password}`,
       "msg-bs"
     );
-    this.doCommandLine(
+    doCommandLine(
       `docker exec -i mail_bs /opt/iredmail/bin/create_user ${login} ${password} 0`,
       "mail-bs"
     );
@@ -168,10 +151,7 @@ MYSQL_SCRIPT`;
     try {
       const { login, number } = await this.userRepository.getUser(id);
       this.removeSIPUser(number);
-      this.doCommandLine(
-        `docker exec -i msg prosodyctl deluser ${login}`,
-        "msg-bs"
-      );
+      doCommandLine(`docker exec -i msg prosodyctl deluser ${login}`, "msg-bs");
       await this.removeMailUser(login);
       const user = await this.userRepository.remove(id);
       return user;
@@ -271,7 +251,7 @@ MYSQL_SCRIPT`;
       for (let i = 0; i < ids.length; i++) {
         const { login, number } = await this.userRepository.getUser(ids[i]);
         this.removeSIPUser(number);
-        this.doCommandLine(
+        doCommandLine(
           `docker exec -i msg prosodyctl deluser ${login}`,
           "msg-bs"
         );

@@ -1,5 +1,6 @@
 import { BaseContoller } from "../common/base.controller.js";
 import request from "request";
+import doCommandLine from "../common/do-command-line.js";
 
 export class SyncController extends BaseContoller {
   constructor(logger, syncService) {
@@ -127,7 +128,10 @@ export class SyncController extends BaseContoller {
   }
 
   upServeses(req, res, next) {
-    console.log("Up");
+    doCommandLine(
+      `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
+      "sync"
+    );
     return this.ok(res, "Up on " + global.IP);
   }
 
@@ -138,7 +142,10 @@ export class SyncController extends BaseContoller {
   }
 
   async syncAudit(req, res, next) {
-    // Тут необходимо поднимать сервисы
+    doCommandLine(
+      `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
+      "sync"
+    );
     const oldIP = req.params.ip;
     console.log("Sync with" + oldIP);
     this.logger.log({
@@ -182,6 +189,10 @@ export class SyncController extends BaseContoller {
   }
 
   async getRCObject(req, res, next) {
+    doCommandLine(
+      `docker compose -f /home/${process.env.USER_NAME}/final/ down`,
+      "sync"
+    );
     const eventsDB = await this.logger.getRCEvents();
     const RCObject = await this.syncService.generateRCObject(eventsDB);
     this.ok(res, RCObject);
