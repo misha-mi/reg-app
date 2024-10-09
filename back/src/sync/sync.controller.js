@@ -141,7 +141,6 @@ export class SyncController extends BaseContoller {
     // Тут необходимо поднимать сервисы
     const oldIP = req.params.ip;
     console.log("Sync with" + oldIP);
-    return this.ok(res, "Sync with" + oldIP);
     this.logger.log({
       context: "syncAudit",
       desc: `Syncing credentials`,
