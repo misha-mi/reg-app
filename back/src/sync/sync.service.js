@@ -103,7 +103,7 @@ export class SyncService {
   async removeUserFromBD(id) {
     try {
       const user = await this.userRepository.getUser(id);
-      if (user && user.status !== "registered") {
+      if (user && user.status == "registered") {
         return await this.userRepository.changeStatus(id, "removed");
       } else if (user) {
         return await this.userRepository.remove(id);
