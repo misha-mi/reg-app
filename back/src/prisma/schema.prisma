@@ -21,7 +21,7 @@ model User {
   name     String
   token    String?
   number   String? @unique
-  isReg    Boolean @default(false)
+  status   String  @default("created")
 }
 
 model Logger {

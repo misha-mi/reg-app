@@ -11,7 +11,7 @@ export class SyncService {
     for (let id in remoteCompare) {
       if (remoteCompare[id] === "create") {
         convertedRemoteCompare[id] = await this.userRepository.getUser(id);
-        convertedRemoteCompare[id].isReg = false;
+        convertedRemoteCompare[id].status = "created";
       } else {
         convertedRemoteCompare[id] = remoteCompare[id];
       }

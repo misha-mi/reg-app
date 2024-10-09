@@ -147,7 +147,7 @@ MYSQL_SCRIPT`;
     } else if (isExistNumber) {
       return "A user with this SIP number already exists";
     }
-    const newUser = new User({ login, name, number, id, isReg: true });
+    const newUser = new User({ login, name, number, id, status: "registered" });
 
     await newUser.setPassword(password);
     this.doCommandLine(

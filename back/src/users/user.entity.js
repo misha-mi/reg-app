@@ -8,7 +8,7 @@ export class User {
     id,
     number,
     role = "user",
-    isReg = false,
+    status = "created",
   }) {
     this._login = login;
     this._name = name;
@@ -16,7 +16,7 @@ export class User {
     this._password = password;
     this._id = id;
     this._number = number;
-    this._isReg = isReg;
+    this._status = status;
   }
 
   get login() {
@@ -43,8 +43,8 @@ export class User {
     return this._number;
   }
 
-  get isReg() {
-    return this._isReg;
+  get status() {
+    return this._status;
   }
 
   async setPassword(pass) {
