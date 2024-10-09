@@ -50,4 +50,11 @@ export class UserRepository {
       where: { id },
     });
   }
+
+  changeStatus(id, status) {
+    return this.prismaClient.user.update({
+      where: { id },
+      data: { status },
+    });
+  }
 }
