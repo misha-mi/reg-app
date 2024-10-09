@@ -104,7 +104,10 @@ export class SyncService {
     try {
       const user = await this.userRepository.getUser(id);
       if (user) {
-        return await this.userRepository.remove(id);
+        return await this.prismaClient.user.update({
+          where: { id },
+          data: { status: "removed" },
+        });
       }
       return null;
     } catch {
