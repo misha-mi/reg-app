@@ -76,7 +76,8 @@ export class SyncController extends BaseContoller {
   async removeUser(req, res, next) {
     const ip = req.ip.split(":").pop(); // это же ip адресс сервера, который инициализирует запрос синхронизации, нужен IP источника запроса на создание/удаление
     const id = req.params.id; // Добавить в конвертер RCO преобразвание в массив типа id:{event, sourceIP}?
-    await this.syncService.removeUserFromBD(id);
+    const answer = await this.syncService.removeUserFromBD(id);
+    console.log(answer);
     this.logger.log({
       context: "remove",
       desc: `The user has been deleted (sync) (ID: ${id})`,
