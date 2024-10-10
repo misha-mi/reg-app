@@ -128,10 +128,11 @@ export class SyncController extends BaseContoller {
   }
 
   upServeses(req, res, next) {
-    doCommandLine(
-      `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
-      "sync"
-    );
+    // doCommandLine(
+    //   `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
+    //   "sync"
+    // );
+    console.log("Up");
     return this.ok(res, "Up on " + global.IP);
   }
 
@@ -142,10 +143,10 @@ export class SyncController extends BaseContoller {
   }
 
   async syncAudit(req, res, next) {
-    doCommandLine(
-      `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
-      "sync"
-    );
+    // doCommandLine(
+    //   `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
+    //   "sync"
+    // );
     const oldIP = req.params.ip;
     console.log("Sync with" + oldIP);
     this.logger.log({
@@ -154,6 +155,7 @@ export class SyncController extends BaseContoller {
       isAudit: true,
       sourceIp: oldIP,
     });
+    return this.ok(res, "SyncAudit from " + newServIP);
 
     request.get(
       {

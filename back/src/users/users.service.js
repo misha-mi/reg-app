@@ -150,6 +150,7 @@ MYSQL_SCRIPT`;
   async removeUser(id) {
     try {
       const { login, number } = await this.userRepository.getUser(id);
+      console.log(id);
       this.removeSIPUser(number);
       doCommandLine(`docker exec -i msg prosodyctl deluser ${login}`, "msg-bs");
       await this.removeMailUser(login);
