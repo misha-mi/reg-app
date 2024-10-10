@@ -155,7 +155,7 @@ export class SyncController extends BaseContoller {
       isAudit: true,
       sourceIp: oldIP,
     });
-    return this.ok(res, "SyncAudit from " + newServIP);
+    return this.ok(res, "SyncAudit from " + oldIP);
 
     request.get(
       {
