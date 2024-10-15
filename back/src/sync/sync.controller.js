@@ -128,25 +128,23 @@ export class SyncController extends BaseContoller {
   }
 
   upServeses(req, res, next) {
-    // doCommandLine(
-    //   `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
-    //   "sync"
-    // );
-    console.log("Up");
+    doCommandLine(
+      `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
+      "sync"
+    );
     return this.ok(res, "Up on " + global.IP);
   }
 
   pushDateToNewServ(req, res, next) {
     const newServIP = req.params.ip;
-    console.log("Push to " + newServIP);
     return this.ok(res, "Push to " + newServIP);
   }
 
   async syncAudit(req, res, next) {
-    // doCommandLine(
-    //   `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
-    //   "sync"
-    // );
+    doCommandLine(
+      `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml up -d`,
+      "sync"
+    );
     const oldIP = req.params.ip;
     console.log("Sync with" + oldIP);
     this.logger.log({
@@ -155,7 +153,6 @@ export class SyncController extends BaseContoller {
       isAudit: true,
       sourceIp: oldIP,
     });
-    return this.ok(res, "SyncAudit from " + oldIP);
 
     request.get(
       {
@@ -175,7 +172,12 @@ export class SyncController extends BaseContoller {
             localCompare: remoteCompare,
           };
           this.sendUpdateData(sendData, oldIP);
-          this.ok(res, "success"); // Тут
+
+          doCommandLine(
+            `docker compose -f /home/${process.env.USER_NAME}/final/ down`,
+            "sync"
+          );
+          this.ok(res, "success");
         }
       }
     );
@@ -191,10 +193,6 @@ export class SyncController extends BaseContoller {
   }
 
   async getRCObject(req, res, next) {
-    doCommandLine(
-      `docker compose -f /home/${process.env.USER_NAME}/final/ down`,
-      "sync"
-    );
     const eventsDB = await this.logger.getRCEvents();
     const RCObject = await this.syncService.generateRCObject(eventsDB);
     this.ok(res, RCObject);
