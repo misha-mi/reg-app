@@ -184,7 +184,7 @@ export class SyncController extends BaseContoller {
       body.compareObj,
       body.remoteIp
     );
-    await this.logUpdate(body.localCompare);
+    await this.logUpdate(body.compareObj.localCompare, body.remoteIp);
     doCommandLine(
       `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml down`,
       "sync"
