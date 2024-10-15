@@ -173,10 +173,6 @@ export class SyncController extends BaseContoller {
           };
           this.sendUpdateData(sendData, oldIP);
 
-          doCommandLine(
-            `docker compose -f /home/${process.env.USER_NAME}/final/ down`,
-            "sync"
-          );
           this.ok(res, "success");
         }
       }
@@ -189,6 +185,10 @@ export class SyncController extends BaseContoller {
       body.remoteIp
     );
     await this.logUpdate(body.localCompare);
+    doCommandLine(
+      `docker compose -f /home/${process.env.USER_NAME}/final/docker-compose.yml down`,
+      "sync"
+    );
     this.ok(res, convertedRemoteCompare);
   }
 
